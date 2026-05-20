@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "SOLORA"
+version = "1.0.0"
+id = "artifacts/solora"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24813
+
+[services.development]
+run = "pnpm --filter @workspace/solora run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/solora", "run", "build" ]
+publicDir = "artifacts/solora/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24813"
+BASE_PATH = "/"

@@ -1,0 +1,62 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "xjysCHZiIRpATZQo6xVn9"
+uri = "file://artifacts/solora/src/assets/images/dest-healing.png"
+type = "image"
+title = "misty coastal healing landscape"
+
+[[generated]]
+id = "XF2afMTtXU5H46jYtmdN0"
+uri = "file://artifacts/solora/src/assets/images/dest-silence.png"
+type = "image"
+title = "snow mountain silence landscape"
+
+[[generated]]
+id = "PGFo7rTCryUY586jpoOlR"
+uri = "file://artifacts/solora/src/assets/images/dest-adventure.png"
+type = "image"
+title = "lush forest adventure landscape"
+
+[[generated]]
+id = "2DghNTJMMgdYg3Ej3ukTj"
+uri = "file://artifacts/solora/src/assets/images/dest-discovery.png"
+type = "image"
+title = "ancient city river self-discovery"
+
+[[generated]]
+id = "lt4ERFvmHZXjmoslJWUvI"
+uri = "file://artifacts/solora/src/assets/images/dest-slow.png"
+type = "image"
+title = "slow living cafe view"
+
+[[generated]]
+id = "iBnlrmqu5bUPAzYJExXYi"
+uri = "file://artifacts/solora/src/assets/images/dest-chaos.png"
+type = "image"
+title = "chaotic city energy sunset"
+
+[[generated]]
+id = "of5mMLA3g1IbLkieJwtIY"
+uri = "file://artifacts/solora/src/assets/images/final-cta.png"
+type = "image"
+title = "epic mountain sunrise landscape"
+
+[[generated]]
+id = "CYPVpkp0KmSWK2BnEFQiV"
+uri = "file://artifacts/solora/src/assets/images/collage-1.png"
+type = "image"
+title = "solo traveler at sunrise"
+
+[[generated]]
+id = "psI1mvZfLZzAYYyiucf6s"
+uri = "file://artifacts/solora/src/assets/images/collage-2.png"
+type = "image"
+title = "mountain trail walking"
+
+[[generated]]
+id = "HbS-CpD93gIrTbOOHhFoS"
+uri = "file://artifacts/solora/src/assets/images/collage-3.png"
+type = "image"
+title = "local cafe reading"
