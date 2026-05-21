@@ -6,8 +6,7 @@ export default function CustomCursor() {
   const handleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const isTouchDevice = () => window.matchMedia("(pointer: coarse)").matches;
-    if (isTouchDevice()) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     let mouseX = 0, mouseY = 0;
     let lensX = 0, lensY = 0;
@@ -16,55 +15,50 @@ export default function CustomCursor() {
 
     const LENS_LERP = 0.12;
     const RING_LERP = 0.07;
+    const MAGNIFY_RADIUS = 120;
+    const MAGNIFY_SCALE = 1.35;
 
+    // ── mouse tracking ──
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
     };
 
+    // ── cursor state per context ──
     const onMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isButton = target.closest("button") || target.closest("a") || target.closest("[role='button']");
-      const isOrbitNode = target.closest(".orbit-node");
-      const isText = ["H1","H2","H3","H4","P","SPAN","EM"].includes(target.tagName);
-
+      const t = e.target as HTMLElement;
       if (!lensRef.current || !ringRef.current || !handleRef.current) return;
+      const isBtn = !!(t.closest("button") || t.closest("a") || t.closest("[role='button']"));
+      const isText = ["H1","H2","H3","H4","H5","P","SPAN","EM","BLOCKQUOTE"].includes(t.tagName);
 
-      if (isButton) {
-        lensRef.current.style.width = "54px";
-        lensRef.current.style.height = "54px";
-        lensRef.current.style.background = "rgba(201,169,110,0.12)";
-        lensRef.current.style.borderColor = "rgba(201,169,110,0.7)";
+      if (isBtn) {
+        lensRef.current.style.cssText += ";width:52px;height:52px;background:rgba(201,169,110,0.12);border-color:rgba(201,169,110,0.72);";
+        ringRef.current.style.cssText += ";width:62px;height:62px;";
         handleRef.current.style.opacity = "0";
-        ringRef.current.style.width = "64px";
-        ringRef.current.style.height = "64px";
-      } else if (isOrbitNode) {
-        lensRef.current.style.width = "58px";
-        lensRef.current.style.height = "58px";
-        lensRef.current.style.background = "rgba(255,248,235,0.06)";
-        lensRef.current.style.borderColor = "rgba(201,169,110,0.55)";
-        handleRef.current.style.opacity = "1";
-        ringRef.current.style.width = "80px";
-        ringRef.current.style.height = "80px";
       } else if (isText) {
-        lensRef.current.style.width = "58px";
-        lensRef.current.style.height = "58px";
-        lensRef.current.style.background = "rgba(255,248,235,0.03)";
-        lensRef.current.style.borderColor = "rgba(201,169,110,0.45)";
+        lensRef.current.style.cssText += ";width:56px;height:56px;background:rgba(255,248,235,0.06);border-color:rgba(201,169,110,0.68);box-shadow:inset 0 0 16px rgba(255,248,235,0.1),0 0 32px rgba(201,169,110,0.18),0 4px 24px rgba(0,0,0,0.2);";
+        ringRef.current.style.cssText += ";width:76px;height:76px;";
         handleRef.current.style.opacity = "1";
-        ringRef.current.style.width = "76px";
-        ringRef.current.style.height = "76px";
       } else {
-        lensRef.current.style.width = "48px";
-        lensRef.current.style.height = "48px";
-        lensRef.current.style.background = "rgba(255,248,235,0.04)";
-        lensRef.current.style.borderColor = "rgba(201,169,110,0.5)";
+        lensRef.current.style.cssText += ";width:48px;height:48px;background:rgba(255,248,235,0.04);border-color:rgba(201,169,110,0.5);box-shadow:inset 0 0 12px rgba(255,248,235,0.06),0 0 20px rgba(201,169,110,0.08),0 4px 20px rgba(0,0,0,0.15);";
+        ringRef.current.style.cssText += ";width:72px;height:72px;";
         handleRef.current.style.opacity = "1";
-        ringRef.current.style.width = "72px";
-        ringRef.current.style.height = "72px";
       }
     };
 
+    // ── text magnification ──
+    const getTextTargets = (): HTMLElement[] =>
+      Array.from(document.querySelectorAll<HTMLElement>(
+        "h1, h2, h3, h4, p, em, .peaceful-quote, .stat-number, .memory-caption"
+      )).filter(el => !el.closest("nav") && !el.closest("[data-fixed]"));
+
+    let textTargets: HTMLElement[] = [];
+    // Refresh targets periodically (lazy DOM content)
+    const refreshTargets = () => { textTargets = getTextTargets(); };
+    refreshTargets();
+    const refreshInterval = window.setInterval(refreshTargets, 2000);
+
+    // ── main RAF loop ──
     const animate = () => {
       lensX += (mouseX - lensX) * LENS_LERP;
       lensY += (mouseY - lensY) * LENS_LERP;
@@ -78,7 +72,32 @@ export default function CustomCursor() {
         ringRef.current.style.transform = `translate3d(${ringX - 36}px, ${ringY - 36}px, 0)`;
       }
       if (handleRef.current) {
-        handleRef.current.style.transform = `translate3d(${lensX + 14}px, ${lensY + 14}px, 0) rotate(45deg)`;
+        handleRef.current.style.transform = `translate3d(${lensX + 13}px, ${lensY + 13}px, 0) rotate(45deg)`;
+      }
+
+      // Text magnification
+      for (const el of textTargets) {
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) continue;
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dist = Math.hypot(lensX - cx, lensY - cy);
+        const influence = MAGNIFY_RADIUS * 2.5;
+
+        if (dist < influence) {
+          const prox = 1 - dist / influence;
+          const scale = 1 + (MAGNIFY_SCALE - 1) * prox * prox;
+          const sharp = prox * 0.25;
+          el.style.transform = `scale(${scale.toFixed(3)})`;
+          el.style.transformOrigin = `${(lensX - rect.left).toFixed(1)}px ${(lensY - rect.top).toFixed(1)}px`;
+          el.style.transition = "transform 0.15s ease, filter 0.15s ease, text-shadow 0.2s ease";
+          el.style.filter = `contrast(${(1 + sharp * 0.12).toFixed(3)})`;
+          el.style.textShadow = `0 0 ${(prox * 28).toFixed(0)}px rgba(201,169,110,${(prox * 0.22).toFixed(2)})`;
+        } else {
+          el.style.transform = "scale(1)";
+          el.style.filter = "";
+          el.style.textShadow = "";
+        }
       }
 
       rafId = requestAnimationFrame(animate);
@@ -92,6 +111,13 @@ export default function CustomCursor() {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseover", onMouseOver);
       cancelAnimationFrame(rafId);
+      clearInterval(refreshInterval);
+      // Reset all magnified elements
+      for (const el of textTargets) {
+        el.style.transform = "";
+        el.style.filter = "";
+        el.style.textShadow = "";
+      }
     };
   }, []);
 
@@ -109,7 +135,7 @@ export default function CustomCursor() {
           border: "1px solid rgba(201,169,110,0.5)",
           boxShadow: "inset 0 0 12px rgba(255,248,235,0.06), 0 0 20px rgba(201,169,110,0.08), 0 4px 20px rgba(0,0,0,0.15)",
           willChange: "transform",
-          transition: "width 0.5s cubic-bezier(0.16,1,0.3,1), height 0.5s cubic-bezier(0.16,1,0.3,1), background 0.5s, border-color 0.5s",
+          transition: "width 0.5s cubic-bezier(0.16,1,0.3,1), height 0.5s cubic-bezier(0.16,1,0.3,1), background 0.5s, border-color 0.5s, box-shadow 0.5s",
         }}
       />
 
@@ -131,13 +157,13 @@ export default function CustomCursor() {
         ref={handleRef}
         className="fixed top-0 left-0 pointer-events-none z-[9997]"
         style={{
-          width: "12px",
+          width: "13px",
           height: "1.5px",
           background: "rgba(201,169,110,0.45)",
           borderRadius: "2px",
           willChange: "transform",
-          transition: "opacity 0.5s cubic-bezier(0.16,1,0.3,1)",
           transformOrigin: "left center",
+          transition: "opacity 0.5s cubic-bezier(0.16,1,0.3,1)",
         }}
       />
     </>

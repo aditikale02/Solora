@@ -1,101 +1,177 @@
 import { useRef } from "react";
+import collage1 from "@/assets/images/collage-1.png";
+import collage2 from "@/assets/images/collage-2.png";
+import collage3 from "@/assets/images/collage-3.png";
+import destSilence from "@/assets/images/dest-silence.png";
+import destHealing from "@/assets/images/dest-healing.png";
+import destAdventure from "@/assets/images/dest-adventure.png";
+import destDiscovery from "@/assets/images/dest-discovery.png";
+import destSlow from "@/assets/images/dest-slow.png";
+import destChaos from "@/assets/images/dest-chaos.png";
 
-const cards = [
-  { caption: "Spiti, 4100m", bg: "linear-gradient(135deg, #ff6b35, #f7931e, #ffd700)" },
-  { caption: "Sunrise, Hampi", bg: "linear-gradient(180deg, #667eea, #764ba2)" },
-  { caption: "Solo, Kasol", bg: "linear-gradient(135deg, #2d5016, #6a9e3f, #a8d5a2)" },
-  { caption: "Hidden, Gokarna", bg: "linear-gradient(135deg, #c9a96e, #e8c97e, #f5e6c8)" },
-  { caption: "Dawn, Mcleodganj", bg: "linear-gradient(180deg, #0077b6, #00b4d8, #90e0ef)" },
-  { caption: "Silence, Zuluk", bg: "linear-gradient(135deg, #1a1714, #2b3f5c, #3d5a80)" },
-  { caption: "Found, Pushkar", bg: "linear-gradient(135deg, #f77f00, #d62828, #fcbf49)" },
-  { caption: "Free, Coorg", bg: "linear-gradient(180deg, #d8e2dc, #a8c5b0, #588157)" },
+type CardType = "cinematic" | "polaroid" | "portrait" | "dreamy";
+
+interface MemoryCard {
+  img: string;
+  caption: string;
+  type: CardType;
+  rotate?: number;
+}
+
+const baseCards: MemoryCard[] = [
+  { img: destSilence,   caption: "Spiti, 2024",                    type: "portrait",   rotate: 0 },
+  { img: collage1,      caption: "chai > everything",              type: "polaroid",   rotate: -1.5 },
+  { img: destHealing,   caption: "day 3. still finding my feet.",  type: "cinematic",  rotate: 0 },
+  { img: destAdventure, caption: "8am. just me and the mountains.", type: "polaroid",  rotate: 1.2 },
+  { img: collage2,      caption: "the view that made it worth it", type: "cinematic",  rotate: 0 },
+  { img: destDiscovery, caption: "didn't plan this stop. best decision.", type: "dreamy", rotate: 0 },
+  { img: destSlow,      caption: "no rush. no plans.",             type: "cinematic",  rotate: 0 },
+  { img: collage3,      caption: "found, somewhere in the hills.", type: "polaroid",   rotate: -0.8 },
+  { img: destChaos,     caption: "before i left everything behind.", type: "dreamy",   rotate: 0 },
 ];
 
-// Duplicate for infinite scroll
-const row1Cards = [...cards, ...cards];
-const row2Cards = [...[...cards].reverse(), ...[...cards].reverse()];
+const row1Cards = [...baseCards, ...baseCards];
+const row2Cards = [...[...baseCards].reverse(), ...[...baseCards].reverse()];
+
+function MemCard({ card, idx, rowKey }: { card: MemoryCard; idx: number; rowKey: string }) {
+  const isPolaroid = card.type === "polaroid";
+  const isPortrait = card.type === "portrait";
+  const isDreamy   = card.type === "dreamy";
+
+  const w = isPortrait ? "160px" : "220px";
+  const h = isPortrait ? "290px" : "260px";
+
+  if (isPolaroid) {
+    return (
+      <div
+        key={`${rowKey}-${idx}`}
+        className="relative flex-shrink-0 group"
+        style={{
+          width: "200px",
+          background: "#F5F0E8",
+          padding: "8px 8px 36px 8px",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.25)",
+          transform: `rotate(${card.rotate ?? 0}deg)`,
+          transition: "transform 0.4s ease, box-shadow 0.4s ease",
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = "rotate(0deg) scale(1.05)"; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = `rotate(${card.rotate ?? 0}deg) scale(1)`; }}
+      >
+        <div className="relative overflow-hidden" style={{ height: "200px" }}>
+          <img
+            src={card.img}
+            alt={card.caption}
+            className="w-full h-full object-cover"
+            style={{ filter: "contrast(1.04) saturate(0.88) brightness(0.95) sepia(0.1)" }}
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 55%, rgba(15,10,5,0.4) 100%)" }} />
+        </div>
+        <p
+          className="text-center mt-2 text-[#3A2E24] opacity-80"
+          style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "0.72rem", fontStyle: "italic" }}
+        >
+          {card.caption}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      key={`${rowKey}-${idx}`}
+      className="relative flex-shrink-0 group overflow-hidden transition-all duration-500 hover:scale-[1.06] hover:z-20"
+      style={{
+        width: w,
+        height: h,
+        borderRadius: "20px",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.45)",
+        transform: `rotateY(${-15 + (idx % 8) * 4}deg) translateZ(${-30 + (idx % 4) * 15}px) translateY(${(idx % 3) * 12}px)`,
+      }}
+    >
+      <img
+        src={card.img}
+        alt={card.caption}
+        className="w-full h-full object-cover"
+        style={{
+          filter: isDreamy
+            ? "contrast(0.95) saturate(0.75) brightness(0.88) blur(1px) sepia(0.12)"
+            : "contrast(1.06) saturate(0.88) brightness(0.94) sepia(0.07)",
+          transition: "filter 0.5s ease",
+        }}
+      />
+      {/* Film overlay */}
+      <div className="absolute inset-0 group-hover:opacity-60 transition-opacity duration-500" style={{ background: "linear-gradient(to bottom, transparent 50%, rgba(10,6,3,0.6) 100%)", borderRadius: "inherit" }} />
+      {/* Caption */}
+      <div className="memory-caption absolute inset-x-0 bottom-0 p-4">
+        <p className="font-sans text-[10px] text-white/80 italic">{card.caption}</p>
+      </div>
+    </div>
+  );
+}
 
 export default function MemoryScroller() {
   const row1Ref = useRef<HTMLDivElement>(null);
   const row2Ref = useRef<HTMLDivElement>(null);
 
-  const handleMouseEnter = () => {
+  const pause = () => {
     if (row1Ref.current) row1Ref.current.style.animationPlayState = "paused";
     if (row2Ref.current) row2Ref.current.style.animationPlayState = "paused";
   };
-
-  const handleMouseLeave = () => {
+  const resume = () => {
     if (row1Ref.current) row1Ref.current.style.animationPlayState = "running";
     if (row2Ref.current) row2Ref.current.style.animationPlayState = "running";
   };
 
   return (
-    <section className="bg-[#0f0d0b] py-32 overflow-hidden relative">
-      <div className="max-w-4xl mx-auto px-6 text-center mb-24 relative z-10">
-        <h2 className="font-serif text-5xl md:text-6xl mb-6">
-          <span className="text-[#C9A96E]">MEMORIES</span> <span className="text-[#1A1714] text-stroke-white" style={{ WebkitTextStroke: "1px rgba(255,248,235,0.4)" }}>FROM THE ROAD</span>
+    <section className="bg-[#0A0806] py-28 overflow-hidden relative">
+
+      {/* Section header */}
+      <div className="max-w-4xl mx-auto px-6 text-center mb-20 relative z-10">
+        <h2 className="font-serif text-5xl md:text-6xl mb-5">
+          <span className="text-[#C9A96E]">MEMORIES</span>{" "}
+          <span className="text-[#F7F0E6]/90">FROM THE ROAD</span>
         </h2>
-        <p className="font-sans text-[#F7F0E6]/70 text-lg">
-          Thousands of solo moments. Each one someone's turning point.
+        <p className="font-sans text-sm tracking-widest text-[#F7F0E6]/45 uppercase">
+          Thousands of solo moments · Each one someone's turning point
         </p>
       </div>
 
-      <div 
-        className="relative w-full h-[700px] flex flex-col gap-12 justify-center"
-        style={{ perspective: "1000px", perspectiveOrigin: "center center" }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+      {/* Scroller */}
+      <div
+        className="relative w-full flex flex-col gap-10"
+        style={{ perspective: "1000px" }}
+        onMouseEnter={pause}
+        onMouseLeave={resume}
       >
-        {/* Row 1 (Right) */}
-        <div 
+        {/* Row 1 — right */}
+        <div
           ref={row1Ref}
-          className="flex gap-8 w-max"
-          style={{ animation: "scrollRight 30s linear infinite" }}
+          className="flex gap-8 w-max items-center"
+          style={{ animation: "scrollRight 28s linear infinite" }}
         >
           {row1Cards.map((card, idx) => (
-            <div 
-              key={`r1-${idx}`}
-              className="group relative w-[200px] h-[280px] rounded-[20px] overflow-hidden transition-all duration-500 hover:scale-108 hover:z-20 hover:shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
-              style={{
-                background: card.bg,
-                boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
-                transform: `rotateY(${-20 + (idx % 8) * 5}deg) translateZ(${-40 + (idx % 4) * 20}px) translateY(${(idx % 3) * 15}px)`,
-              }}
-            >
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                <p className="font-sans text-xs text-white/85">{card.caption}</p>
-              </div>
-            </div>
+            <MemCard key={`r1-${idx}`} card={card} idx={idx} rowKey="r1" />
           ))}
         </div>
 
-        {/* Row 2 (Left) */}
-        <div 
+        {/* Row 2 — left */}
+        <div
           ref={row2Ref}
-          className="flex gap-8 w-max"
-          style={{ animation: "scrollLeft 25s linear infinite" }}
+          className="flex gap-8 w-max items-center"
+          style={{ animation: "scrollLeft 34s linear infinite" }}
         >
           {row2Cards.map((card, idx) => (
-            <div 
-              key={`r2-${idx}`}
-              className="group relative w-[200px] h-[280px] rounded-[20px] overflow-hidden transition-all duration-500 hover:scale-108 hover:z-20 hover:shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
-              style={{
-                background: card.bg,
-                boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
-                transform: `rotateY(${20 - (idx % 8) * 5}deg) translateZ(${40 - (idx % 4) * 20}px) translateY(${-(idx % 3) * 15}px)`,
-              }}
-            >
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                <p className="font-sans text-xs text-white/85">{card.caption}</p>
-              </div>
-            </div>
+            <MemCard key={`r2-${idx}`} card={card} idx={idx} rowKey="r2" />
           ))}
         </div>
 
-        {/* Fade Masks */}
-        <div className="absolute inset-y-0 left-0 w-[15%] bg-gradient-to-r from-[#0f0d0b] to-transparent pointer-events-none z-10" />
-        <div className="absolute inset-y-0 right-0 w-[15%] bg-gradient-to-l from-[#0f0d0b] to-transparent pointer-events-none z-10" />
+        {/* Fade masks */}
+        <div className="absolute inset-y-0 left-0 w-[12%] bg-gradient-to-r from-[#0A0806] to-transparent pointer-events-none z-10" />
+        <div className="absolute inset-y-0 right-0 w-[12%] bg-gradient-to-l from-[#0A0806] to-transparent pointer-events-none z-10" />
       </div>
+
+      {/* Bottom blend */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent, #100D09)" }} />
     </section>
   );
 }

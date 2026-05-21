@@ -239,3 +239,57 @@
   transform-style: preserve-3d;
 }
 
+@keyframes kenBurns {
+  from { transform: scale(1.0); }
+  to   { transform: scale(1.04); }
+}
+
+@keyframes quote-glow-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.06); }
+}
+
+@keyframes grass-sway {
+  0%, 100% { transform: rotate(-0.8deg) translateX(-2px); }
+  50%       { transform: rotate(0.8deg) translateX(2px); }
+}
+
+@keyframes cloud-drift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(40px); }
+}
+
+@keyframes ocean-shimmer {
+  0%, 100% { filter: brightness(0.82) saturate(1); }
+  50%       { filter: brightness(0.87) saturate(1.05); }
+}
+
+@keyframes mist-rise {
+  0%   { transform: translateY(0) scale(1); opacity: 0.25; }
+  100% { transform: translateY(-50px) scale(1.2); opacity: 0; }
+}
+
+@keyframes ember-rise {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.8; }
+  100% { transform: translateY(-64px) translateX(10px) scale(0.3); opacity: 0; }
+}
+
+@keyframes dest-breathe {
+  0%, 100% { filter: brightness(0.88) saturate(0.95); }
+  50%       { filter: brightness(0.92) saturate(1.0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grass-layer,
+  .cloud-layer,
+  .ember,
+  .floating-particle,
+  .explorer-breathe {
+    animation: none !important;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
