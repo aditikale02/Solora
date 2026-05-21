@@ -8,12 +8,14 @@ import UnderstandSection from "@/components/UnderstandSection";
 import DestinationsSection from "@/components/DestinationsSection";
 import StatsSection from "@/components/StatsSection";
 import MemoryCollage from "@/components/MemoryCollage";
+import MemoryScroller from "@/components/MemoryScroller";
 import QuoteTransition from "@/components/QuoteTransition";
 import StoriesSection from "@/components/StoriesSection";
 import CommunitySection from "@/components/CommunitySection";
 import PartnersMarquee from "@/components/PartnersMarquee";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
+import ExplorerJourney from "@/components/ExplorerJourney";
 
 export default function Home() {
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function Home() {
     <main className="bg-[#F7F2EC] text-[#1A1714] min-h-screen font-sans relative overflow-x-hidden selection:bg-[#C9A96E] selection:text-[#1A1714]">
       <div className="grain pointer-events-none fixed inset-0 z-50 mix-blend-overlay"></div>
       <CustomCursor />
+      <ExplorerJourney />
       
       <Navbar />
       
@@ -54,19 +57,21 @@ export default function Home() {
       
       <DestinationsSection />
       
-      <QuoteTransition text="You don't need permission to begin again." />
+      <QuoteTransition text="You don't need permission to begin again." attribution="Every solo traveler, somewhere on a mountain" />
       
       <StatsSection />
       
       <MemoryCollage />
       
-      <QuoteTransition text="Some places heal what words cannot." />
+      <MemoryScroller />
+      
+      <QuoteTransition text="Some places heal what words cannot." attribution="A journal entry, Spiti Valley" />
       
       <StoriesSection />
       
       <CommunitySection />
       
-      <QuoteTransition text="The version of you that travels alone — meet them." />
+      <QuoteTransition text="The version of you that travels alone — meet them." attribution="The path not yet taken" />
       
       <PartnersMarquee />
       

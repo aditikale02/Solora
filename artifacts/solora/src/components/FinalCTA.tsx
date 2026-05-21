@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import finalCtaImg from "@/assets/images/final-cta.png";
+import PremiumButton from "./PremiumButton";
 
 export default function FinalCTA() {
   return (
@@ -26,12 +27,12 @@ export default function FinalCTA() {
           transition={{ duration: 1, delay: 0.2 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-6"
         >
-          <button className="px-8 py-4 bg-[#C9A96E] text-[#1A1714] font-sans text-sm tracking-widest uppercase rounded-full hover:bg-[#F7F0E6] transition-colors w-full sm:w-auto">
+          <PremiumButton variant="primary">
             Start My Journey
-          </button>
-          <button className="px-8 py-4 bg-transparent border border-[#F7F0E6]/30 text-[#F7F0E6] font-sans text-sm tracking-widest uppercase rounded-full hover:border-[#F7F0E6] transition-colors w-full sm:w-auto">
+          </PremiumButton>
+          <PremiumButton variant="secondary">
             Plan My Solo Trip
-          </button>
+          </PremiumButton>
         </motion.div>
       </div>
     </section>

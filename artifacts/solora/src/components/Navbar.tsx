@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import SoloraLogo from "./SoloraLogo";
+import PremiumButton from "./PremiumButton";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,16 +22,12 @@ export default function Navbar() {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="group flex items-center gap-2 cursor-none">
+        <Link href="/" className="group flex items-center gap-4 cursor-none">
+          <SoloraLogo variant={isScrolled ? "dark" : "light"} size={40} />
           <span className={`text-2xl font-serif tracking-widest transition-colors duration-500 ${
             isScrolled ? "text-[#1A1714]" : "text-[#C9A96E]"
           }`}>
             SOLORA
-          </span>
-          <span className={`text-sm transition-colors duration-500 ${
-            isScrolled ? "text-[#C9A96E]" : "text-[#C9A96E]"
-          }`}>
-            ★
           </span>
         </Link>
 
@@ -46,13 +44,9 @@ export default function Navbar() {
         </nav>
 
         <Link href="#begin" className="cursor-none">
-          <button className={`px-6 py-2 rounded-full border text-sm uppercase tracking-widest transition-all duration-300 hover:bg-[#C9A96E] hover:text-[#1A1714] ${
-            isScrolled 
-              ? "border-[#C9A96E] text-[#1A1714]" 
-              : "border-[#C9A96E] text-[#F7F0E6]"
-          }`}>
+          <PremiumButton variant={isScrolled ? "primary" : "secondary"}>
             Begin Your Journey
-          </button>
+          </PremiumButton>
         </Link>
       </div>
     </motion.header>

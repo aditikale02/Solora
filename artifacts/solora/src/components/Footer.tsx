@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import SoloraLogo from "./SoloraLogo";
 
 export default function Footer() {
   return (
@@ -6,7 +7,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-8">
         
         <div className="lg:w-[40%] space-y-8">
-          <h2 className="font-serif text-4xl tracking-widest text-[#F7F0E6]">SOLORA</h2>
+          <SoloraLogo variant="light" size={64} />
           <p className="font-sans text-[#F7F0E6]/70 max-w-sm">
             Discover who you become when you finally explore alone.
           </p>
