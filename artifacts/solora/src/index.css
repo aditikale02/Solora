@@ -187,6 +187,21 @@
   }
 }
 
+@keyframes slowZoom {
+  from { transform: scale(1.0); }
+  to   { transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 0.6; }
+  to   { transform: translateY(-100vh); opacity: 0; }
+}
+
 .grain::after {
   content: '';
   position: absolute;

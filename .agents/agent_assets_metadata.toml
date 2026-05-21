@@ -60,3 +60,15 @@ id = "HbS-CpD93gIrTbOOHhFoS"
 uri = "file://artifacts/solora/src/assets/images/collage-3.png"
 type = "image"
 title = "local cafe reading"
+
+[[generated]]
+id = "SDWQC0Y_KOPEV3fF4-0CK"
+uri = "file://attached_assets/generated_images/dramatic_ocean_cliff_at_4bb3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ylaawYsVyDEjiE1Kh0fE-"
+uri = "file://attached_assets/generated_images/cinematic_indian_city_street_bf92.png"
+type = "image"
+title = "generated_image"
