@@ -3,19 +3,15 @@ import Lenis from "@studio-freight/lenis";
 import CustomCursor from "@/components/CustomCursor";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import ProblemSection from "@/components/ProblemSection";
-import UnderstandSection from "@/components/UnderstandSection";
-import DestinationsSection from "@/components/DestinationsSection";
-import StatsSection from "@/components/StatsSection";
-import MemoryCollage from "@/components/MemoryCollage";
+import PeacefulArrival from "@/components/PeacefulArrival";
+import EmotionalOrbit from "@/components/EmotionalOrbit";
+import ExplorerTransition from "@/components/ExplorerTransition";
+import CinematicDestinations from "@/components/CinematicDestinations";
 import MemoryScroller from "@/components/MemoryScroller";
-import QuoteTransition from "@/components/QuoteTransition";
-import StoriesSection from "@/components/StoriesSection";
-import CommunitySection from "@/components/CommunitySection";
-import PartnersMarquee from "@/components/PartnersMarquee";
-import FinalCTA from "@/components/FinalCTA";
+import StoriesRoad from "@/components/StoriesRoad";
+import CommunityTrust from "@/components/CommunityTrust";
+import TransformationScene from "@/components/TransformationScene";
 import Footer from "@/components/Footer";
-import ExplorerJourney from "@/components/ExplorerJourney";
 
 export default function Home() {
   useEffect(() => {
@@ -42,41 +38,41 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="bg-[#F7F2EC] text-[#1A1714] min-h-screen font-sans relative overflow-x-hidden selection:bg-[#C9A96E] selection:text-[#1A1714]">
-      <div className="grain pointer-events-none fixed inset-0 z-50 mix-blend-overlay"></div>
+    <main className="bg-[#0F0D0A] text-[#F7F0E6] min-h-screen font-sans relative overflow-x-hidden" style={{ cursor: "none" }}>
+      {/* Global film grain */}
+      <div className="grain pointer-events-none fixed inset-0 z-50 mix-blend-overlay opacity-[0.025]" />
+
       <CustomCursor />
-      <ExplorerJourney />
-      
       <Navbar />
-      
+
+      {/* 1. Cinematic Hero */}
       <HeroSection />
-      
-      <ProblemSection />
-      
-      <UnderstandSection />
-      
-      <DestinationsSection />
-      
-      <QuoteTransition text="You don't need permission to begin again." attribution="Every solo traveler, somewhere on a mountain" />
-      
-      <StatsSection />
-      
-      <MemoryCollage />
-      
+
+      {/* 2. Peaceful World Arrival */}
+      <PeacefulArrival />
+
+      {/* 3. Emotional Orbit System */}
+      <EmotionalOrbit />
+
+      {/* 4. Explorer Journey Transition */}
+      <ExplorerTransition />
+
+      {/* 5. Cinematic India Destinations */}
+      <CinematicDestinations />
+
+      {/* 6. Memory Scroller */}
       <MemoryScroller />
-      
-      <QuoteTransition text="Some places heal what words cannot." attribution="A journal entry, Spiti Valley" />
-      
-      <StoriesSection />
-      
-      <CommunitySection />
-      
-      <QuoteTransition text="The version of you that travels alone — meet them." attribution="The path not yet taken" />
-      
-      <PartnersMarquee />
-      
-      <FinalCTA />
-      
+
+      {/* 7. Stories From The Road */}
+      <StoriesRoad />
+
+      {/* 8. Community & Trust + Stats */}
+      <CommunityTrust />
+
+      {/* 9. Final Transformation Scene */}
+      <TransformationScene />
+
+      {/* 10. Cinematic Footer */}
       <Footer />
     </main>
   );

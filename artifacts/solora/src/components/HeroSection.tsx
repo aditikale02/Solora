@@ -142,7 +142,7 @@ export default function HeroSection() {
         </div>
 
         {/* Tagline */}
-        <div className="relative z-10 text-center px-6">
+        <div className="relative z-10 text-center px-6 mt-[10vh]">
           <h1 className="font-serif text-[6vw] md:text-[5vw] leading-[1.1] font-light tracking-[0.02em] text-[#1A1714]" style={{ textShadow: "0 2px 40px rgba(247,240,230,0.6)" }}>
             <span className="block overflow-hidden">
               <motion.span className="block" initial={{ y: 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
