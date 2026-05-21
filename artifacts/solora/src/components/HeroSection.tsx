@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import PremiumButton from "./PremiumButton";
-import heroChaosCityImg from "@/assets/images/hero-chaos-city.png";
+import heroMountainImg from "@/assets/images/hero-mountain-valley.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -60,16 +60,17 @@ export default function HeroSection() {
         <div
           className="absolute inset-0 animate-[slowZoom_20s_ease-in-out_infinite_alternate]"
           style={{
-            backgroundImage: `url(${heroChaosCityImg})`,
+            backgroundImage: `url(${heroMountainImg})`,
             backgroundSize: "cover",
-            backgroundPosition: "center",
-            transform: "translateZ(-200px) scale(1.5)",
+            backgroundPosition: "center 40%",
+            filter: "blur(3px) brightness(0.88)",
+            transform: "translateZ(-200px) scale(1.6)",
           }}
         >
-          {/* Cinematic warm overlay */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(26,18,10,0.35) 0%, rgba(26,18,10,0.15) 40%, rgba(26,18,10,0.55) 100%)" }} />
+          {/* Subtle cool overlay — keeps mountain tones, darkens for text legibility */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(10,14,20,0.28) 0%, rgba(10,14,20,0.08) 45%, rgba(10,14,20,0.55) 100%)" }} />
           {/* Vignette */}
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(10,7,4,0.6) 100%)" }} />
+          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 45%, rgba(5,8,15,0.5) 100%)" }} />
         </div>
         
         {/* Layer 3: City Buildings */}

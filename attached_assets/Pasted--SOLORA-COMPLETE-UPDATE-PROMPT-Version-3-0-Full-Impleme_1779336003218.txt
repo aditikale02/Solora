@@ -1,0 +1,600 @@
+# SOLORA — COMPLETE UPDATE PROMPT
+### Version 3.0 · Full Implementation Brief · All Changes Combined
+
+---
+
+You are updating an existing SOLORA homepage.
+Apply every change in this document precisely and completely.
+Do not skip any section.
+Do not revert any previously implemented feature.
+
+The goal remains:
+**An interactive cinematic film — not a website.**
+
+---
+
+## UPDATE 1 — FOOTER COPYRIGHT LINE
+
+### Replace the current copyright text entirely.
+
+**Remove:**
+```
+© 2025 All Rights Reserved
+```
+
+**Replace with:**
+```
+© 2026 Solora — Made for the ones still searching for themselves.
+```
+
+**Styling of the copyright line:**
+- Font: small uppercase spaced sans-serif
+- Size: `0.7rem`
+- Letter-spacing: `0.2em`
+- Color: warm cream at low opacity — `rgba(247, 240, 230, 0.4)`
+- The em-dash and tagline after "Solora" should be in muted gold: `rgba(201, 169, 110, 0.5)`
+- On hover: full line gently brightens to `opacity: 0.8` — slow `0.6s` transition
+
+**Placement:**
+- Bottom-most line of the footer
+- Centered or left-aligned depending on footer layout
+- Separated from footer links above by generous spacing
+
+**This one line must carry the emotional weight of the entire brand.**
+It is the last thing a user reads. Make it feel intentional and cinematic.
+
+---
+
+## UPDATE 2 — CURSOR SYSTEM REPLACEMENT
+
+### Remove the current cursor system entirely. Replace with a premium cinematic magnifying glass cursor.
+
+---
+
+### Cursor Philosophy
+
+The magnifying glass cursor is not a gimmick.
+It is an **emotional exploration tool**.
+
+The user is not just browsing — they are **discovering** the world of SOLORA.
+Every time they move the cursor over text or imagery, they are discovering something deeper.
+
+The cursor must feel:
+- Luxurious and smooth
+- Artistic and intentional
+- Part of the cinematic storytelling system
+- Like it belongs in a premium editorial film experience
+
+The cursor must NOT feel:
+- Gimmicky or cartoonish
+- Heavy or laggy
+- Tech-demo distortion effect
+- Childish glass toy
+
+---
+
+### Cursor Visual Design
+
+**Structure — 3 layers:**
+
+**Layer 1 — Inner lens circle:**
+```css
+.cursor-lens {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.5);
+  background: rgba(255, 248, 235, 0.04);
+  backdrop-filter: blur(0.5px);
+  box-shadow:
+    inset 0 0 12px rgba(255, 248, 235, 0.06),
+    0 0 20px rgba(201, 169, 110, 0.08),
+    0 4px 20px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+}
+```
+
+**Layer 2 — Outer ring:**
+```css
+.cursor-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 110, 0.15);
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+}
+```
+
+**Layer 3 — Magnifying glass handle:**
+- A very subtle short diagonal line extending from the bottom-right of the lens
+- Length: `10–14px`
+- Color: `rgba(201, 169, 110, 0.4)`
+- Thickness: `1.5px`
+- Rounded end cap
+- This detail makes it clearly a magnifying glass without being cartoonish
+
+```css
+.cursor-handle {
+  position: fixed;
+  width: 12px;
+  height: 1.5px;
+  background: rgba(201, 169, 110, 0.45);
+  border-radius: 2px;
+  transform: rotate(45deg);
+  pointer-events: none;
+  z-index: 9999;
+  /* Positioned at bottom-right of lens */
+}
+```
+
+**Overall feel:** Minimal, clean, barely-there — but unmistakably a magnifying glass.
+
+---
+
+### Cursor Movement System
+
+Use lerp (linear interpolation) for smooth cinematic motion:
+
+```javascript
+// Cursor tracking with lerp smoothing
+let mouse = { x: 0, y: 0 };
+let lens = { x: 0, y: 0 };
+let ring = { x: 0, y: 0 };
+
+const LENS_LERP = 0.12;   // Inner lens — slightly faster
+const RING_LERP = 0.07;   // Outer ring — more lag = more luxury
+
+document.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+function animateCursor() {
+  // Lens follows with slight lag
+  lens.x += (mouse.x - lens.x) * LENS_LERP;
+  lens.y += (mouse.y - lens.y) * LENS_LERP;
+
+  // Ring follows with more lag
+  ring.x += (mouse.x - ring.x) * RING_LERP;
+  ring.y += (mouse.y - ring.y) * RING_LERP;
+
+  // Apply transforms (center-corrected)
+  cursorLens.style.transform = `translate(${lens.x - 24}px, ${lens.y - 24}px)`;
+  cursorRing.style.transform = `translate(${ring.x - 36}px, ${ring.y - 36}px)`;
+  cursorHandle.style.transform = `translate(${lens.x + 16}px, ${lens.y + 16}px) rotate(45deg)`;
+
+  requestAnimationFrame(animateCursor);
+}
+
+animateCursor();
+```
+
+The cursor should feel:
+**fluid, inertial, alive — never snappy or mechanical.**
+
+---
+
+### Text Magnification Effect
+
+**This is the most important cursor behavior.**
+
+When the cursor moves over any text element — typography, quotes, taglines, destination names, captions — the text **subtly magnifies inside the lens area**.
+
+**Implementation approach:**
+
+Use a **cloned magnified layer** technique:
+
+```javascript
+// Create a hidden magnified clone of the text layer
+const magnifiedClone = document.createElement('div');
+magnifiedClone.classList.add('magnified-layer');
+document.body.appendChild(magnifiedClone);
+
+// The clone is clipped to the cursor lens circle
+// and shows content at 1.4x scale centered on cursor position
+
+magnifiedClone.style.cssText = `
+  position: fixed;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9997;
+  /* Clip to lens shape */
+`;
+
+// On each frame, copy the area under the cursor
+// and render it at 1.35x zoom inside the lens
+```
+
+**OR — CSS transform approach (lighter weight):**
+
+On `mousemove` over text elements:
+```javascript
+textElements.forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    // Identify words/characters near cursor
+    // Apply subtle scale transform to nearby chars
+    // Using a character-splitting library like splitting.js
+  });
+});
+```
+
+**Magnification values:**
+- Zoom level inside lens: `1.3x – 1.45x` (subtle, not aggressive)
+- Transition into magnification: `0.3s` ease
+- Transition out: `0.4s` ease (slightly slower exit feels premium)
+
+---
+
+### Typography Reaction Inside Lens
+
+When the magnifying cursor passes over cinematic typography:
+
+**What the user sees inside the lens:**
+- Letters appear slightly larger and sharper
+- Serif details become more visible and refined
+- A very soft warm glow emanates from letterforms
+- Text depth increases — feels like it has dimensionality
+
+**Key cinematic taglines react most expressively:**
+
+```
+When hovering "choose yourself":
+  — Letters expand softly within the lens
+  — Serif curves become beautifully detailed
+  — Warm gold glow traces the letterforms
+  — The word feels weighted and important
+
+When hovering destination names:
+  — Name sharpens and grows slightly
+  — Subtle atmospheric color behind letters
+  — Feels like focusing on something far away
+```
+
+---
+
+### Cursor State Transformations
+
+The cursor changes subtly depending on what section it's in:
+
+| Context | Cursor Behavior |
+|---|---|
+| **Peaceful landscape / hero** | Lens border softens, glow calmer, slight blue tint |
+| **Emotional typography / quotes** | Lens enlarges to `58px`, glow warms, magnification stronger |
+| **CTA buttons** | Lens fills with warm gold tint, ring tightens, handle disappears |
+| **Memory cards / images** | Lens becomes sharper, border brightens, image clarity increases inside |
+| **Explorer character** | Lens shrinks slightly, handle animates a small movement |
+| **Empty background / atmosphere** | Default minimal state |
+
+**State transition speed:** `0.5s` cubic-bezier easing — never instant.
+
+---
+
+### Image Interaction
+
+When hovering over memory cards, destination imagery, or any visual:
+
+Inside the lens:
+- Image clarity subtly increases (contrast/saturation micro-boost)
+- A very soft vignette appears at the lens edge
+- Feels like **focusing through a real lens on an emotional memory**
+
+```css
+/* Image focus effect inside lens */
+.magnified-image-layer {
+  filter: contrast(1.08) saturate(1.12) brightness(1.03);
+  /* Very subtle — never aggressive */
+}
+```
+
+**The interaction should feel:**
+like emotionally examining a memory.
+
+---
+
+### Environment Reaction
+
+The cursor's presence should subtly affect the surrounding atmosphere:
+
+- Floating particles within `120px` of cursor drift gently toward or away from it
+- Atmospheric glow/fog very slightly shifts in the cursor's direction
+- Background grain texture has a barely perceptible reaction near the cursor
+
+All reactions must be:
+**extremely subtle — immersive, not distracting.**
+
+---
+
+### Cursor Performance Rules
+
+- All cursor animations run on `requestAnimationFrame` — never `setTimeout` or `setInterval`
+- Use `transform` only — never `top/left` for positioning
+- The magnification layer is composited on GPU (`will-change: transform`)
+- Target: **60fps minimum** at all times
+- On touch devices: cursor system is completely disabled — no fallback shown
+- `cursor: none` applied to `body` — the custom cursor replaces all native cursors
+
+---
+
+### Cursor Usability Rule
+
+**The website must remain perfectly readable and usable at all times.**
+
+The magnification enhances immersion.
+It must never:
+- Obscure text the user is trying to read
+- Block interactive elements
+- Cause layout shifts
+- Reduce legibility
+
+**If in doubt — reduce the effect.**
+Luxury is restraint.
+
+---
+
+## UPDATE 3 — LOGO REPLACEMENT
+
+### Remove the current text-based wordmark logo.
+
+Replace with the **illustrated line-art traveler character** from the provided reference image.
+
+**Logo character description (from reference):**
+- Solo traveler with bucket hat
+- Large backpack
+- Holding and reading an open map
+- Directional signpost behind/above him
+- Clean minimal black line-art style
+- No fills — pure line illustration
+- Warm, curious, slightly lost but confident energy
+
+**Recreation for web:**
+- Implement as inline SVG for full control
+- Crisp at all sizes from `32px` to `200px`
+- Two color variants:
+  - Light version: `rgba(247, 240, 230, 0.95)` — for dark/hero backgrounds
+  - Dark version: `#1A1714` — for light/warm backgrounds
+
+**Logo sizes:**
+- Navbar: `44px` tall
+- Footer: `64px` tall
+- Loading screen: `80px` tall
+- Mobile menu: `48px` tall
+
+**Navbar behavior:**
+- Logo sits left-aligned in the navbar
+- The SOLORA wordmark text appears next to it in the brand serif font
+- Together: illustrated icon + wordmark = complete logo lockup
+
+---
+
+### Logo Animation
+
+**Idle breathing animation:**
+```css
+@keyframes explorer-breathe {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-3px); }
+}
+
+.logo-icon {
+  animation: explorer-breathe 4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+```
+
+**Hover state:**
+```css
+.logo-icon:hover {
+  transform: rotate(4deg) translateY(-2px);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+```
+
+The character leans forward slightly — curious, eager to explore.
+
+**Map detail:**
+If the SVG has enough detail — the map the explorer holds can have a very subtle rotation animation (±1 degree, slow) — like he is studying it.
+
+---
+
+## UPDATE 4 — HERO SECTION — TRUE 3D CINEMATIC ENVIRONMENT
+
+### Rebuild the hero as one continuous 3D camera journey through two worlds.
+
+**Total scroll depth:** `500vh` — pinned.
+**Scrub factor:** `1.5` — luxuriously slow.
+
+---
+
+### Scene Structure
+
+**SCENE 1 — Chaos World (0% → 30%)**
+
+True depth-layered animated environment:
+
+```
+Z-Layer 1 (nearest):   Notification bubbles, phone screens, blur motion
+Z-Layer 2 (mid-near):  Walking silhouettes, office desks, traffic lights
+Z-Layer 3 (mid-far):   Metro doors, crowds, crosswalks, building facades
+Z-Layer 4 (far):       City skyline, transit lines, hazy sky
+```
+
+All layers move at different speeds as camera pushes forward.
+Style: warm, stylized, beautiful — not dark or grim.
+
+**SCENE 2 — Gateway Discovery (30% → 50%)**
+
+Giant glowing archway appears in the distance at 30%.
+Warm gold volumetric light pours from inside.
+Glimpses of mountains and open sky visible through the gate.
+
+**SCENE 3 — Approaching (50% → 80%)**
+
+Camera slowly closes the distance to the gate.
+Chaos fades layer by layer.
+Colors shift from cool urban to warm golden.
+Gate fills the frame.
+
+**SCENE 4 — Entering (80% → 90%)**
+
+Gate doors open slowly.
+Warm light bloom expands.
+Camera threshold crossing — old world disappears.
+
+**SCENE 5 — Peaceful World (90% → 100%)**
+
+Mountain landscape. Golden hour. Open road.
+Wind movement. Drifting clouds. Deep peace.
+Pause here before tagline appears.
+
+---
+
+## UPDATE 5 — CINEMATIC QUOTE SECTIONS
+
+### Replace flat text quotes with premium floating cinematic containers.
+
+**Container CSS:**
+```css
+.quote-container {
+  background: rgba(255, 248, 235, 0.05);
+  backdrop-filter: blur(28px) saturate(1.5);
+  border: 1px solid rgba(201, 169, 110, 0.12);
+  border-radius: 24px;
+  padding: 72px 96px;
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 80px rgba(201, 169, 110, 0.04);
+  max-width: 860px;
+}
+```
+
+**Reveal animation:**
+Container slides in from side → typography assembles letter by letter → brief hold → scroll continues.
+
+**Quote copy:**
+```
+❝ You don't need permission to begin again. ❞
+— Every solo traveler, somewhere on a mountain
+
+❝ Some places heal what words cannot. ❞
+— A journal entry, Spiti Valley
+
+❝ Maybe freedom was waiting outside your comfort zone all along. ❞
+— The version of you that went anyway
+```
+
+---
+
+## UPDATE 6 — MEMORY SCROLLER
+
+### Add a continuously moving 3D cinematic memory gallery.
+
+**Layout:** Diagonal cascading ribbon of cards — two rows moving opposite directions.
+**Movement:** Always on, infinite, never stops.
+**Card style:** Rounded `20px`, perspective-transformed, cinematic photography.
+**Hover:** Scroller slows, hovered card expands and glows.
+
+**Section header:**
+```
+MEMORIES FROM THE ROAD
+
+Thousands of solo moments.
+Each one someone's turning point.
+```
+
+---
+
+## UPDATE 7 — MINI EXPLORER JOURNEY
+
+### The illustrated traveler travels the entire homepage length as the user scrolls.
+
+Fixed position on left or right edge of viewport.
+Scroll progress maps to explorer's Y position and animation state.
+A faint dotted gold path line trails behind him.
+
+**Journey states:**
+
+| Scroll % | Explorer State |
+|---|---|
+| 0–15% | Walking fast, slightly overwhelmed |
+| 15–30% | Stops, looks up at gate |
+| 30–50% | Walks slowly toward light |
+| 50–65% | Stands, faces horizon peacefully |
+| 65–75% | Sits, reads map |
+| 75–85% | Points forward, excited |
+| 85–95% | Walking confidently, head up |
+| 95–100% | Arrives at viewpoint, arms slightly raised |
+
+**Hover interaction:**
+Speech bubble appears with contextual micro-copy:
+- *"Still deciding?"* (early)
+- *"It gets better from here."* (middle)
+- *"You're almost there."* (near end)
+
+---
+
+## UPDATE 8 — PREMIUM BUTTON REDESIGN
+
+### Replace all buttons with cinematic glassmorphism premium design.
+
+**Primary button:**
+```css
+.btn-primary {
+  background: linear-gradient(135deg,
+    rgba(201, 169, 110, 0.15),
+    rgba(201, 169, 110, 0.07));
+  border: 1px solid rgba(201, 169, 110, 0.4);
+  border-radius: 100px;
+  padding: 18px 52px;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  overflow: hidden;
+  position: relative;
+}
+```
+
+**Shine sweep on hover** (`::before` pseudo-element left→right pass).
+**Magnetic cursor pull** within `80px` radius.
+**Lift on hover:** `translateY(-2px)` + glow expansion.
+**Press state:** `scale(0.98)` + inset shadow — tactile and premium.
+
+---
+
+## GLOBAL RULES — DO NOT BREAK
+
+- Every animation uses `transform` and `opacity` only
+- All motion uses custom cinematic easing: `cubic-bezier(0.16, 1, 0.3, 1)`
+- Film grain texture overlay on entire page: `opacity: 0.025`
+- Emotional arc preserved: `Chaos → Curiosity → Escape → Peace → Self-Discovery → Transformation`
+- Explorer character connects every section as the emotional thread
+- Cursor system enhances immersion — never reduces readability
+- Target performance: `60fps` on all interactions
+- `cursor: none` on body — custom cursor replaces everything
+
+---
+
+## FINAL EXPERIENCE STANDARD
+
+The homepage passes when a user finishes scrolling and feels:
+
+> *"I wasn't browsing a website. I was living a moment."*
+
+Followed immediately by:
+
+> *"I want to do this. I'm ready to begin."*
+
+---
+
+*SOLORA — Made for the ones still searching for themselves.*
+*Update Prompt v3.0 — Complete Implementation Brief*

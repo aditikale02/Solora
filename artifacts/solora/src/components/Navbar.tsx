@@ -1,32 +1,36 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import SoloraLogo from "./SoloraLogo";
 import PremiumButton from "./PremiumButton";
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50);
+    setScrolled(latest > 80);
   });
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-500 ${
-        isScrolled ? "bg-[#F7F2EC]/90 backdrop-blur-md" : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-40"
+      style={{
+        background: scrolled
+          ? "rgba(247, 242, 236, 0.08)"
+          : "transparent",
+        backdropFilter: scrolled ? "blur(20px) saturate(1.2)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(201, 169, 110, 0.1)" : "none",
+        transition: "background 0.6s ease, backdrop-filter 0.6s ease, border-bottom 0.6s ease",
+      }}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="group flex items-center gap-4 cursor-none">
-          <SoloraLogo variant={isScrolled ? "dark" : "light"} size={40} />
-          <span className={`text-2xl font-serif tracking-widest transition-colors duration-500 ${
-            isScrolled ? "text-[#1A1714]" : "text-[#C9A96E]"
-          }`}>
+      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <Link href="/" className="group flex items-center gap-3 cursor-none">
+          <SoloraLogo variant="light" size={40} />
+          <span className="text-2xl font-serif tracking-widest text-[#F7F0E6] transition-colors duration-500">
             SOLORA
           </span>
         </Link>
@@ -34,9 +38,7 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-8">
           {["Destinations", "Stories", "Community"].map((item) => (
             <Link key={item} href={`#${item.toLowerCase()}`} className="cursor-none">
-              <span className={`text-sm tracking-widest uppercase transition-colors duration-500 hover:text-[#C9A96E] ${
-                isScrolled ? "text-[#1A1714]/70" : "text-[#F7F0E6]/70"
-              }`}>
+              <span className="text-sm tracking-widest uppercase text-[#F7F0E6]/70 hover:text-[#C9A96E] transition-colors duration-300">
                 {item}
               </span>
             </Link>
@@ -44,7 +46,7 @@ export default function Navbar() {
         </nav>
 
         <Link href="#begin" className="cursor-none">
-          <PremiumButton variant={isScrolled ? "primary" : "secondary"}>
+          <PremiumButton variant="secondary">
             Begin Your Journey
           </PremiumButton>
         </Link>
