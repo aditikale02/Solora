@@ -1,8 +1,17 @@
-import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { useState } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import SoloraLogo from "./SoloraLogo";
 import PremiumButton from "./PremiumButton";
+
+const scrollTo = (id: string) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const navItems = [
+  { label: "Destinations", id: "destinations" },
+  { label: "Stories",      id: "stories" },
+  { label: "Community",    id: "community" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -27,9 +36,12 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-        {/* Logo + wordmark */}
-        <Link href="/" className="group flex items-center gap-4 cursor-none">
-          {/* Icon — clamp from 48px (mobile) to 62px (desktop) */}
+        {/* Logo */}
+        <button
+          onClick={() => scrollTo("hero")}
+          className="group flex items-center gap-4 cursor-none bg-transparent border-none p-0"
+          aria-label="Return to top"
+        >
           <div style={{ width: "clamp(48px, 5.5vw, 62px)" }}>
             <SoloraLogo variant="light" />
           </div>
@@ -39,22 +51,27 @@ export default function Navbar() {
           >
             SOLORA
           </span>
-        </Link>
+        </button>
 
         {/* Nav links */}
         <nav className="hidden md:flex items-center gap-8">
-          {["Destinations", "Stories", "Community"].map((item) => (
-            <Link key={item} href={`#${item.toLowerCase()}`} className="cursor-none">
+          {navItems.map(({ label, id }) => (
+            <button
+              key={id}
+              onClick={() => scrollTo(id)}
+              className="cursor-none bg-transparent border-none p-0 group"
+            >
               <span className="text-sm tracking-widest uppercase text-[#F7F0E6]/70 hover:text-[#C9A96E] transition-colors duration-300">
-                {item}
+                {label}
               </span>
-            </Link>
+            </button>
           ))}
         </nav>
 
-        <Link href="#begin" className="cursor-none">
-          <PremiumButton variant="secondary">Begin Your Journey</PremiumButton>
-        </Link>
+        {/* CTA */}
+        <PremiumButton variant="secondary" onClick={() => scrollTo("selector")}>
+          Begin Your Journey
+        </PremiumButton>
       </div>
     </motion.header>
   );

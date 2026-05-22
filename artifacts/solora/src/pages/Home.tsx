@@ -6,6 +6,7 @@ import HeroSection from "@/components/HeroSection";
 import PeacefulArrival from "@/components/PeacefulArrival";
 import EmotionalOrbit from "@/components/EmotionalOrbit";
 import ExplorerTransition from "@/components/ExplorerTransition";
+import TripSelector from "@/components/TripSelector";
 import CinematicDestinations from "@/components/CinematicDestinations";
 import MemoryScroller from "@/components/MemoryScroller";
 import StoriesRoad from "@/components/StoriesRoad";
@@ -29,12 +30,9 @@ export default function Home() {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
-
     requestAnimationFrame(raf);
 
-    return () => {
-      lenis.destroy();
-    };
+    return () => { lenis.destroy(); };
   }, []);
 
   return (
@@ -46,7 +44,9 @@ export default function Home() {
       <Navbar />
 
       {/* 1. Cinematic Hero */}
-      <HeroSection />
+      <section id="hero" className="contents">
+        <HeroSection />
+      </section>
 
       {/* 2. Peaceful World Arrival */}
       <PeacefulArrival />
@@ -57,23 +57,32 @@ export default function Home() {
       {/* 4. Explorer Journey Transition */}
       <ExplorerTransition />
 
-      {/* 5. Cinematic India Destinations */}
+      {/* 5. Trip Selector — destination + date picker */}
+      <TripSelector />
+
+      {/* 6. Cinematic India Destinations — id="destinations" */}
       <CinematicDestinations />
 
-      {/* 6. Memory Scroller */}
+      {/* 7. Memory Scroller — id="memories" */}
       <MemoryScroller />
 
-      {/* 7. Stories From The Road */}
-      <StoriesRoad />
+      {/* 8. Stories From The Road */}
+      <div id="stories">
+        <StoriesRoad />
+      </div>
 
-      {/* 8. Community & Trust + Stats */}
+      {/* 9. Community & Trust + Stats — id="community" */}
       <CommunityTrust />
 
-      {/* 9. Final Transformation Scene */}
-      <TransformationScene />
+      {/* 10. Final Transformation Scene */}
+      <div id="transformation">
+        <TransformationScene />
+      </div>
 
-      {/* 10. Cinematic Footer */}
-      <Footer />
+      {/* 11. Cinematic Footer */}
+      <div id="footer">
+        <Footer />
+      </div>
     </main>
   );
 }
