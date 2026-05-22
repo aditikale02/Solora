@@ -1,0 +1,220 @@
+# SOLORA — HERO SECTION REFINEMENT PROMPT
+### Step 1 · Door Transition Smoothness · Chaos Atmosphere · Logo Size
+
+---
+
+## FIX 1 — DOOR OPENING TRANSITION SMOOTHNESS
+
+### Current Problem
+The gateway doors open but the transition feels abrupt or jerky — not cinematic and smooth.
+
+### Fix Requirements
+
+**Make the door opening feel:**
+- Luxurious and slow
+- Ceremonial and intentional
+- Like real heavy doors opening under weight
+- Perfectly smooth with zero jank
+
+**Implementation:**
+
+1. **Door opening duration:** Minimum `2.4 seconds` — not rushed
+   - At scroll 80% → door starts opening
+   - At scroll 90% → door fully open
+   - Total: 10% scroll height = 2.4s+ of smooth opening
+
+2. **Door opening easing:** Use `cubic-bezier(0.34, 1.56, 0.64, 1)` 
+   - This is a custom "ease-out-back" that feels like a heavy object with momentum
+   - Creates that cinematic "weight" feeling
+
+3. **Door animation structure:**
+   ```javascript
+   // Pseudo-code for the door animation
+   gsap.timeline({
+     scrollTrigger: {
+       trigger: heroSection,
+       start: 'top top',
+       end: '+=500%',
+       scrub: 1.8,  // CRITICAL: this is your smoothness setting
+       pin: true
+     }
+   })
+   .to(doorLeft,  { x: -180, duration: 1, ease: 'power2.out' }, '80%')
+   .to(doorRight, { x: 180,  duration: 1, ease: 'power2.out' }, '<')
+   .to(gateGlow,  { opacity: 1, scale: 1.2, duration: 1.2 }, '75%')
+   .to(lightBloom, { opacity: 1, filter: 'brightness(1.3)', duration: 1.4 }, '76%')
+   ```
+
+4. **Parallel animations that feel like one motion:**
+   - **Door left panel:** slides left with `x: -180px` (adjust based on door width)
+   - **Door right panel:** slides right with `x: +180px` (mirror)
+   - **Gate glow:** opacity increases from `0.5 → 1.0` and slightly scales up
+   - **Light bloom:** brightness increases `1.0 → 1.3`, creating the warm light flood
+   - **Fog expansion:** the volumetric fog around the gate expands slightly
+   - **Camera exposure:** the entire scene brightness increases subtly
+
+5. **Smoothness settings:**
+   - The main GSAP ScrollTrigger must have `scrub: 1.5 to 1.8` — this is what creates the buttery smooth feel
+   - If it's jerky, increase `scrub` value (higher = smoother but more lag)
+   - If it feels too slow, decrease `scrub` (lower = more responsive)
+   - Target: it should feel like you're watching a film being projected smoothly, not a website being controlled
+
+6. **Anti-jank optimizations:**
+   - All animated elements: `will-change: transform, opacity`
+   - Use `transform: translateX()` for door movement — NOT `left` or `margin`
+   - Use `opacity` for glow/bloom — NOT `display` or `visibility`
+   - GPU acceleration: `transform3d()` for all position changes
+
+---
+
+## FIX 2 — CHAOS WORLD ATMOSPHERE — MORE DAILY LIFE PROBLEMS
+
+### Current Problem
+Scene 1 (chaos world) feels like just a city background. It doesn't emotionally convey being "trapped in routine" and "overwhelmed by modern life."
+
+### Fix Requirements
+
+**Add visual storytelling of daily life overwhelm:**
+
+The user should feel: *"Yes, I am drowning in this exact chaos."*
+
+**Visual elements to add/enhance in Scene 1:**
+
+1. **Notification overload animation:**
+   - Social media notifications appearing and disappearing constantly
+   - Email badges pinging
+   - Chat bubbles with unread counts
+   - Calendar reminders popping up
+   - These should feel like they're attacking from all sides — not peaceful, mildly chaotic
+
+2. **Urban overstimulation:**
+   - Multiple screens visible: laptop showing endless scroll, phone showing notifications, billboard with ads flashing
+   - Traffic lights changing repeatedly
+   - People walking in all directions quickly
+   - Crowded metro platform with too many bodies
+   - Rush hour energy — everyone moving fast, nobody stopping
+
+3. **Work/study pressure visuals:**
+   - Open laptop with overflowing inbox
+   - Stack of notebooks/books
+   - Clock showing late hours (9:47 PM, 11:23 PM style)
+   - Deadlines written on sticky notes visible
+   - Coffee cup (half-empty, cold)
+   - Pen marks on calendar showing blocked schedules
+
+4. **Digital fatigue:**
+   - Multiple app icons with red notification badges
+   - Charging cables everywhere (phone, laptop, earbuds)
+   - Blue light glow from screens
+   - Social media feeds visible with endless scrolling indicators
+
+5. **FOMO and anxiety visuals:**
+   - Friends' story updates (Instagram style)
+   - Other people's vacation photos
+   - Travel posts on timeline
+   - The subtle feeling of "everyone is doing something, you're stuck"
+
+6. **Animation behavior:**
+   - All these elements should move, pulse, and flicker slightly
+   - Notification badges should ping and grow
+   - Screens should glow and dim rhythmically
+   - The overall motion should feel frantic but beautiful — never depressing
+   - Color palette stays warm and cinematic — not cold or dark
+
+**Visual treatment:**
+- Keep colors warm (amber, warm grey, muted orange)
+- Use soft shadows and cinematic lighting
+- The overwhelm is beautiful, not ugly
+- Think: a stylized animated short film about modern burnout, not a documentary
+
+---
+
+## FIX 3 — SOLORA LOGO SIZE INCREASE
+
+### Current Problem
+The logo is too small — it doesn't command the visual attention it should.
+The illustrated traveler should feel iconic and immediately recognizable.
+
+### Fix Requirements
+
+**Logo sizing by location:**
+
+| Location | Current Size | New Size | Notes |
+|---|---|---|---|
+| Navbar | 44px | 56–64px | More presence, still clean |
+| Loading screen / page entry | 80px | 120–140px | Hero moment — bigger impact |
+| Footer | 64px | 80–96px | Still restful but more authority |
+| Hero section (if used) | (if used) | 100–120px | Breathing space, centered |
+
+**Logo scaling rules:**
+- Scale proportionally on mobile (use `clamp()` for responsive sizing)
+- `clamp(44px, 8vw, 64px)` for navbar — scales between 44px and 64px depending on viewport
+- `clamp(80px, 12vw, 140px)` for loading/hero — scales between 80px and 140px
+- The SVG itself must remain crisp at all sizes — ensure `vector-effect="non-scaling-stroke"` or proper line weights
+
+**CSS implementation:**
+```css
+.logo-icon {
+  width: clamp(44px, 8vw, 64px);     /* navbar */
+  height: auto;
+  /* OR */
+  width: clamp(80px, 12vw, 140px);   /* hero/loading */
+  height: auto;
+}
+```
+
+**Breathing space around logo:**
+- Increase margin/padding around the logo by 20–30% when size increases
+- In navbar: add `margin-right: 24px` minimum (was probably 16px)
+- In footer: ensure equal spacing top/bottom
+
+**Visual hierarchy:**
+- The logo should now feel like the primary visual anchor, not an afterthought
+- On the loading screen especially — it should dominate gently
+- In navbar — it should be the first thing the eye lands on
+
+**Animation with new size:**
+- Keep the breathing animation the same (±3px vertical drift, 4s cycle)
+- On hover: still rotates `4deg` with smooth easing
+- The character should feel more present and alive with the larger size
+
+---
+
+## TESTING CHECKLIST
+
+After implementing all 3 fixes:
+
+**Door transition:**
+- [ ] Doors open smoothly over 2.4–3 seconds
+- [ ] Zero jank or stuttering during opening
+- [ ] Light bloom feels cinematic and warm
+- [ ] Fog expands gently around the gate
+- [ ] Feels like watching a film, not a website
+
+**Chaos atmosphere:**
+- [ ] Notifications appear and ping visually
+- [ ] Multiple screens visible with digital fatigue
+- [ ] Urban overstimulation feels real but beautiful
+- [ ] User emotionally feels "stuck in routine"
+- [ ] Colors stay warm (no depressing dark mood)
+
+**Logo size:**
+- [ ] Logo is noticeably larger in navbar — more presence
+- [ ] Logo is impressive on loading screen — hero moment
+- [ ] Logo is proportional and crisp at all sizes
+- [ ] Spacing around logo is balanced
+- [ ] Mobile scaling works smoothly (use `clamp()`)
+
+---
+
+## IMPLEMENTATION ORDER
+
+1. First: Increase logo sizes + add responsive scaling with `clamp()`
+2. Second: Enhance chaos world visuals (add notifications, screens, daily life pressure)
+3. Third: Smooth door transition by tuning GSAP `scrub` value and easing curves
+
+Test after each step.
+
+---
+
+*SOLORA — Hero Refinement Prompt v1.0*

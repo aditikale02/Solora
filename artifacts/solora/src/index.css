@@ -239,6 +239,12 @@
   transform-style: preserve-3d;
 }
 
+@keyframes notification-ping {
+  0%   { box-shadow: 0 0 0 0   rgba(201,169,110,0.45); }
+  60%  { box-shadow: 0 0 0 10px rgba(201,169,110,0); }
+  100% { box-shadow: 0 0 0 0   rgba(201,169,110,0); }
+}
+
 @keyframes kenBurns {
   from { transform: scale(1.0); }
   to   { transform: scale(1.04); }
