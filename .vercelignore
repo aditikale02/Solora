@@ -1,0 +1,17 @@
+# Ignore all workspace packages except solora
+artifacts/api-server/**
+artifacts/mockup-sandbox/**
+artifacts/project/**
+
+# Ignore lib packages except what's needed
+lib/**
+
+# Ignore scripts
+scripts/**
+
+# Ignore documentation and assets
+attached_assets/**
+.local/**
+.cache/**
+.replit
+replit.md
