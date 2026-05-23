@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "pnpm --filter @workspace/solora run build",
-  "outputDirectory": "artifacts/solora/dist",
+  "outputDirectory": "artifacts/solora/dist/public",
   "env": {
     "PORT": "3000",
     "BASE_PATH": "/"

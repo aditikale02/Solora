@@ -4,16 +4,23 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
-// Use fallback values for build-time environments like Vercel
-const rawPort = process.env.PORT || "3000";
+// Use sensible defaults when env vars are not provided (helps CI / Vercel builds)
+const rawPort = process.env.PORT ?? "5173";
 const port = Number(rawPort);
 
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-// Use fallback value for BASE_PATH
-const basePath = process.env.BASE_PATH || "/";
+// Default base path to root when not provided. In Replit or other
+// environments a specific BASE_PATH may still be injected.
+const basePath = process.env.BASE_PATH ?? "/";
+if (!process.env.BASE_PATH) {
+  // provide a non-fatal warning so local dev still informs the operator
+  // while allowing automated builders (like Vercel) to proceed.
+  // eslint-disable-next-line no-console
+  console.warn('BASE_PATH not provided — defaulting to "/"');
+}
 
 export default defineConfig({
   base: basePath,
@@ -44,7 +51,7 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist"),
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
   },
   server: {
