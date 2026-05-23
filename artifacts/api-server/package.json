@@ -5,7 +5,7 @@
   "type": "module",
    "scripts": {
     "dev": "cross-env NODE_ENV=development tsx --env-file=../../.env ./src/index.ts",
-    "build": "tsx ./build.ts",
+    "build": "node ./build.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
