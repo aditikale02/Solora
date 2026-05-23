@@ -1,13 +1,13 @@
 import { useRef } from "react";
-import collage1 from "@/assets/images/collage-1.png";
-import collage2 from "@/assets/images/collage-2.png";
-import collage3 from "@/assets/images/collage-3.png";
-import destSilence from "@/assets/images/dest-silence.png";
-import destHealing from "@/assets/images/dest-healing.png";
-import destAdventure from "@/assets/images/dest-adventure.png";
-import destDiscovery from "@/assets/images/dest-discovery.png";
-import destSlow from "@/assets/images/dest-slow.png";
-import destChaos from "@/assets/images/dest-chaos.png";
+import collage1 from "@/assets/images/collage-1.jpg";
+import collage2 from "@/assets/images/collage-2.jpg";
+import collage3 from "@/assets/images/collage-3.jpg";
+import destSilence from "@/assets/images/dest-silence.jpg";
+import destHealing from "@/assets/images/dest-healing.jpg";
+import destAdventure from "@/assets/images/dest-adventure.jpg";
+import destDiscovery from "@/assets/images/dest-discovery.jpg";
+import destSlow from "@/assets/images/dest-slow.jpg";
+import destChaos from "@/assets/images/dest-chaos.jpg";
 
 type CardType = "cinematic" | "polaroid" | "portrait" | "dreamy";
 

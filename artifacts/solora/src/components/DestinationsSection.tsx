@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import destHealing from "@/assets/images/dest-healing.png";
-import destSilence from "@/assets/images/dest-silence.png";
-import destAdventure from "@/assets/images/dest-adventure.png";
-import destDiscovery from "@/assets/images/dest-discovery.png";
-import destSlow from "@/assets/images/dest-slow.png";
-import destChaos from "@/assets/images/dest-chaos.png";
+import destHealing from "@/assets/images/dest-healing.jpg";
+import destSilence from "@/assets/images/dest-silence.jpg";
+import destAdventure from "@/assets/images/dest-adventure.jpg";
+import destDiscovery from "@/assets/images/dest-discovery.jpg";
+import destSlow from "@/assets/images/dest-slow.jpg";
+import destChaos from "@/assets/images/dest-chaos.jpg";
 
 const destinations = [
   { img: destHealing, cat: "For Healing", locations: "Kerala · Mcleodganj · Pondicherry" },

@@ -3,8 +3,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import PremiumButton from "./PremiumButton";
-import heroCityImg from "@/assets/images/hero-chaos-city.png";
-import heroMountainImg from "@/assets/images/hero-mountain-valley.png";
+import heroCityImg from "@/assets/images/hero-chaos-city.jpg";
+import heroMountainImg from "@/assets/images/hero-mountain-valley.jpg";
 
 gsap.registerPlugin(ScrollTrigger);
 

@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import collage1 from "@/assets/images/collage-1.png";
-import collage2 from "@/assets/images/collage-2.png";
-import collage3 from "@/assets/images/collage-3.png";
-import finalCta from "@/assets/images/final-cta.png";
+import collage1 from "@/assets/images/collage-1.jpg";
+import collage2 from "@/assets/images/collage-2.jpg";
+import collage3 from "@/assets/images/collage-3.jpg";
+import finalCta from "@/assets/images/final-cta.jpg";
 
 const cards = [
   { img: collage1, rotation: -6, x: -40, y: 20, quote: "I cried at sunrise and it was perfect." },

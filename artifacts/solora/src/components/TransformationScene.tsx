@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import oceanCliffImg from "@/assets/images/ocean-cliff-sunrise.png";
+import oceanCliffImg from "@/assets/images/ocean-cliff-sunrise.jpg";
 import PremiumButton from "./PremiumButton";
 
 export default function TransformationScene() {

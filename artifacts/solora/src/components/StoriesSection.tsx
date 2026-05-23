@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import story1 from "@/assets/images/dest-healing.png";
-import story2 from "@/assets/images/dest-silence.png";
-import story3 from "@/assets/images/dest-adventure.png";
-import story4 from "@/assets/images/dest-discovery.png";
+import story1 from "@/assets/images/dest-healing.jpg";
+import story2 from "@/assets/images/dest-silence.jpg";
+import story3 from "@/assets/images/dest-adventure.jpg";
+import story4 from "@/assets/images/dest-discovery.jpg";
 
 const stories = [
   { title: "How a wrong train taught me to stop planning", img: story1 },

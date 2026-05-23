@@ -1,10 +1,10 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import destSilenceImg from "@/assets/images/dest-silence.png";
-import destHealingImg from "@/assets/images/dest-healing.png";
-import destDiscoveryImg from "@/assets/images/dest-discovery.png";
-import destAdventureImg from "@/assets/images/dest-adventure.png";
-import destSlowImg from "@/assets/images/dest-slow.png";
+import destSilenceImg from "@/assets/images/dest-silence.jpg";
+import destHealingImg from "@/assets/images/dest-healing.jpg";
+import destDiscoveryImg from "@/assets/images/dest-discovery.jpg";
+import destAdventureImg from "@/assets/images/dest-adventure.jpg";
+import destSlowImg from "@/assets/images/dest-slow.jpg";
 
 const destinations = [
   { name: "Spiti Valley",  category: "For Silence",       line: "Where the mountains ask you to be still.",        img: destSilenceImg,   layout: "image-left"  },

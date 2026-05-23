@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import heroMountainImg from "@/assets/images/hero-mountain-valley.png";
+import heroMountainImg from "@/assets/images/hero-mountain-valley.jpg";
 
 export default function PeacefulArrival() {
   const sectionRef = useRef<HTMLElement>(null);
