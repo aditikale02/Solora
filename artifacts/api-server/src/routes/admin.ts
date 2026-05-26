@@ -47,9 +47,22 @@ function slugify(value: string): string {
 function mapDestination(row: typeof destinationsTable.$inferSelect) {
   return destinationSchema.parse({
     id: row.id,
-    name: row.name,
+    name: row.title,
+    title: row.title,
     slug: row.slug,
-    description: row.description,
+    description: row.shortDescription,
+    categoryId: row.categoryId ?? undefined,
+    state: row.state,
+    city: row.city,
+    shortDescription: row.shortDescription,
+    longDescription: row.longDescription,
+    heroImageUrl: row.heroImageUrl,
+    bestSeason: row.bestSeason,
+    estimatedBudget: row.estimatedBudget,
+    idealDurationDays: row.idealDurationDays,
+    travelTips: row.travelTips,
+    featured: row.featured,
+    isActive: row.isActive,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   });
@@ -163,7 +176,8 @@ router.post("/admin/destinations", async (req, res, next) => {
     }
 
     const values = parsed.data;
-    const slug = values.slug ?? slugify(values.name);
+    const title = values.title ?? values.name ?? "";
+    const slug = values.slug ?? slugify(title);
     const [existing] = await db
       .select({ id: destinationsTable.id })
       .from(destinationsTable)
@@ -177,9 +191,20 @@ router.post("/admin/destinations", async (req, res, next) => {
     const [row] = await db
       .insert(destinationsTable)
       .values({
-        name: values.name,
+        title,
+        categoryId: values.categoryId ?? null,
         slug,
-        description: values.description,
+        state: values.state,
+        city: values.city,
+        shortDescription: values.shortDescription ?? values.description ?? "",
+        longDescription: values.longDescription,
+        heroImageUrl: values.heroImageUrl,
+        bestSeason: values.bestSeason,
+        estimatedBudget: values.estimatedBudget,
+        idealDurationDays: values.idealDurationDays,
+        travelTips: values.travelTips,
+        featured: values.featured,
+        isActive: values.isActive,
       })
       .returning();
 
@@ -204,7 +229,8 @@ router.put("/admin/destinations/:id", async (req, res, next) => {
     }
 
     const values = parsed.data;
-    const slug = values.slug ?? slugify(values.name);
+    const title = values.title ?? values.name ?? "";
+    const slug = values.slug ?? slugify(title);
 
     const [existing] = await db
       .select({ id: destinationsTable.id })
@@ -219,9 +245,20 @@ router.put("/admin/destinations/:id", async (req, res, next) => {
     const [row] = await db
       .update(destinationsTable)
       .set({
-        name: values.name,
+        title,
+        categoryId: values.categoryId ?? null,
         slug,
-        description: values.description,
+        state: values.state,
+        city: values.city,
+        shortDescription: values.shortDescription ?? values.description ?? "",
+        longDescription: values.longDescription,
+        heroImageUrl: values.heroImageUrl,
+        bestSeason: values.bestSeason,
+        estimatedBudget: values.estimatedBudget,
+        idealDurationDays: values.idealDurationDays,
+        travelTips: values.travelTips,
+        featured: values.featured,
+        isActive: values.isActive,
         updatedAt: new Date(),
       })
       .where(eq(destinationsTable.id, id))
@@ -278,7 +315,7 @@ router.get("/admin/packages", async (_req, res, next) => {
       .select({
         id: packagesTable.id,
         destinationId: packagesTable.destinationId,
-        destinationName: destinationsTable.name,
+        destinationName: destinationsTable.title,
         title: packagesTable.title,
         slug: packagesTable.slug,
         description: packagesTable.description,

@@ -87,7 +87,7 @@ router.get("/packages", async (_req, res, next) => {
       .select({
         id: packagesTable.id,
         destinationId: packagesTable.destinationId,
-        destinationName: destinationsTable.name,
+        destinationName: destinationsTable.title,
         title: packagesTable.title,
         slug: packagesTable.slug,
         description: packagesTable.description,
@@ -125,7 +125,7 @@ router.get("/packages/:slug", async (req, res, next) => {
       .select({
         id: packagesTable.id,
         destinationId: packagesTable.destinationId,
-        destinationName: destinationsTable.name,
+        destinationName: destinationsTable.title,
         title: packagesTable.title,
         slug: packagesTable.slug,
         description: packagesTable.description,

@@ -318,7 +318,7 @@ export default function AdminDashboard() {
                             variant="outline"
                             onClick={() => {
                               setEditingDestinationId(dest.id);
-                              setDestinationName(dest.name);
+                              setDestinationName(dest.title ?? dest.name ?? "");
                               setEditingDestinationDesc(dest.description ?? "");
                             }}
                           >

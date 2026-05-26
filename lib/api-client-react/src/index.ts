@@ -13,6 +13,11 @@ import {
 	newsletterSubscriptionResponseSchema,
 	adminLeadSchema,
 	adminUploadResponseSchema,
+	sessionRoleSchema,
+	destinationCategorySchema,
+	destinationImageSchema,
+	savedDestinationSchema,
+	recentlyViewedDestinationSchema,
 	destinationInputSchema,
 	destinationSchema,
 	packageImageSchema,
@@ -22,6 +27,11 @@ import {
 	serviceSchema,
 	type AdminLeadRecord,
 	type AdminUploadResponse,
+	type SessionRole,
+	type DestinationCategoryRecord,
+	type DestinationImageRecord,
+	type SavedDestinationRecord,
+	type RecentlyViewedDestinationRecord,
 	type ContactSubmissionInput,
 	type ContactSubmissionResponse,
 	type DestinationInput,
@@ -38,6 +48,14 @@ import {
 } from "@workspace/api-zod";
 
 	const REQUEST_TIMEOUT_MS = 15000;
+
+type LegacyDestinationInput = Partial<DestinationInput> & {
+	name?: string;
+	title?: string;
+	description?: string;
+	shortDescription?: string;
+	categoryId?: string | null;
+};
 
 async function postJson<T>(path: string, body: unknown): Promise<T> {
 	return apiFetch<T>(path, {
@@ -133,10 +151,121 @@ export async function fetchAdminDestinations(): Promise<DestinationRecord[]> {
 	);
 }
 
+export async function fetchSessionRole(): Promise<SessionRole> {
+	const response = await apiFetch<SessionRole>("/api/auth/role", {
+		responseType: "json",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+
+	return sessionRoleSchema.parse(response);
+}
+
+export async function fetchPublicDestinations(): Promise<DestinationRecord[]> {
+	const response = await apiFetch<{ destinations: DestinationRecord[] }>("/api/destinations", {
+		responseType: "json",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+
+	return response.destinations.map((destination) => destinationSchema.parse(destination));
+}
+
+export async function fetchPublicDestinationBySlug(
+	slug: string,
+): Promise<{ destination: DestinationRecord; images: DestinationImageRecord[] }> {
+	const response = await apiFetch<{ destination: DestinationRecord; images: DestinationImageRecord[] }>(
+		`/api/destinations/${slug}`,
+		{
+			responseType: "json",
+			timeoutMs: REQUEST_TIMEOUT_MS,
+		},
+	);
+
+	return {
+		destination: destinationSchema.parse(response.destination),
+		images: response.images.map((image) => destinationImageSchema.parse(image)),
+	};
+}
+
+export async function fetchDestinationCategories(): Promise<DestinationCategoryRecord[]> {
+	const response = await apiFetch<{ categories: DestinationCategoryRecord[] }>("/api/categories", {
+		responseType: "json",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+
+	return response.categories.map((category) => destinationCategorySchema.parse(category));
+}
+
+export async function fetchCategoryBySlug(
+	slug: string,
+): Promise<{ category: DestinationCategoryRecord; destinations: DestinationRecord[] }> {
+	const response = await apiFetch<{
+		category: DestinationCategoryRecord;
+		destinations: DestinationRecord[];
+	}>(`/api/categories/${slug}`, {
+		responseType: "json",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+
+	return {
+		category: destinationCategorySchema.parse(response.category),
+		destinations: response.destinations.map((destination) => destinationSchema.parse(destination)),
+	};
+}
+
+export async function saveDestination(destinationId: string): Promise<SavedDestinationRecord> {
+	const response = await postJson<{ savedDestination: SavedDestinationRecord }>(
+		"/api/user/saved-destinations",
+		{ destinationId },
+	);
+
+	return savedDestinationSchema.parse(response.savedDestination);
+}
+
+export async function unsaveDestination(destinationId: string): Promise<void> {
+	await apiFetch(`/api/user/saved-destinations/${destinationId}`, {
+		method: "DELETE",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+}
+
+export async function fetchSavedDestinations(): Promise<Array<{ save: SavedDestinationRecord; destination: DestinationRecord }>> {
+	const response = await apiFetch<{ savedDestinations: Array<{ save: SavedDestinationRecord; destination: DestinationRecord }> }>(
+		"/api/user/saved-destinations",
+		{ responseType: "json", timeoutMs: REQUEST_TIMEOUT_MS },
+	);
+
+	return response.savedDestinations.map((item) => ({
+		save: savedDestinationSchema.parse(item.save),
+		destination: destinationSchema.parse(item.destination),
+	}));
+}
+
+export async function fetchRecentlyViewedDestinations(): Promise<Array<{ view: RecentlyViewedDestinationRecord; destination: DestinationRecord }>> {
+	const response = await apiFetch<{ recentlyViewed: Array<{ view: RecentlyViewedDestinationRecord; destination: DestinationRecord }> }>(
+		"/api/user/recently-viewed",
+		{ responseType: "json", timeoutMs: REQUEST_TIMEOUT_MS },
+	);
+
+	return response.recentlyViewed.map((item) => ({
+		view: recentlyViewedDestinationSchema.parse(item.view),
+		destination: destinationSchema.parse(item.destination),
+	}));
+}
+
+export async function recordRecentlyViewed(destinationId: string): Promise<void> {
+	await postJson("/api/user/recently-viewed", { destinationId });
+}
+
 export async function createAdminDestination(
-	payload: DestinationInput,
+	payload: LegacyDestinationInput,
 ): Promise<DestinationRecord> {
-	const body = destinationInputSchema.parse(payload);
+	const body = destinationInputSchema.parse({
+		...payload,
+		title: payload.title ?? payload.name ?? "",
+		name: payload.name ?? payload.title ?? "",
+		description: payload.description ?? payload.shortDescription ?? "",
+		shortDescription: payload.shortDescription ?? payload.description ?? "",
+	});
 	const response = await postJson<{ destination: DestinationRecord }>(
 		"/api/admin/destinations",
 		body,
@@ -147,9 +276,15 @@ export async function createAdminDestination(
 
 export async function updateAdminDestination(
 	id: string,
-	payload: DestinationInput,
+	payload: LegacyDestinationInput,
 ): Promise<DestinationRecord> {
-	const body = destinationInputSchema.parse(payload);
+	const body = destinationInputSchema.parse({
+		...payload,
+		title: payload.title ?? payload.name ?? "",
+		name: payload.name ?? payload.title ?? "",
+		description: payload.description ?? payload.shortDescription ?? "",
+		shortDescription: payload.shortDescription ?? payload.description ?? "",
+	});
 	const response = await apiFetch<{ destination: DestinationRecord }>(
 		`/api/admin/destinations/${id}`,
 		{

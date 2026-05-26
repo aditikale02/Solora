@@ -20,7 +20,7 @@ export function isAllowedAdminEmail(email: string | null | undefined): boolean {
   return getAdminEmails().has(email.toLowerCase());
 }
 
-export async function signInAdmin(email: string, password: string) {
+export async function signInWithPassword(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -29,6 +29,12 @@ export async function signInAdmin(email: string, password: string) {
   if (error) {
     throw error;
   }
+
+  return data;
+}
+
+export async function signInAdmin(email: string, password: string) {
+  const data = await signInWithPassword(email, password);
 
   if (!isAllowedAdminEmail(data.user.email ?? undefined)) {
     await supabase.auth.signOut({ scope: "local" });

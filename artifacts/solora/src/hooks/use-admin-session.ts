@@ -1,43 +1,20 @@
-import { useEffect, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
-import { isAllowedAdminEmail, type AdminSessionState } from "@/lib/admin-auth";
-import { supabase } from "@/lib/supabase";
-
-function getState(session: Session | null): AdminSessionState {
-  const email = session?.user.email ?? null;
-
-  if (!email) {
-    return { status: "signed-out" };
-  }
-
-  if (!isAllowedAdminEmail(email)) {
-    return { status: "forbidden", email };
-  }
-
-  return { status: "signed-in", email };
-}
+import { type AdminSessionState } from "@/lib/admin-auth";
+import { useSessionRole } from "./use-session-role";
 
 export function useAdminSession() {
-  const [state, setState] = useState<AdminSessionState>({ status: "loading" });
+  const sessionRole = useSessionRole();
 
-  useEffect(() => {
-    let mounted = true;
+  if (sessionRole.status === "loading") {
+    return { status: "loading" } as AdminSessionState;
+  }
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (mounted) {
-        setState(getState(data.session));
-      }
-    });
+  if (sessionRole.status === "admin") {
+    return { status: "signed-in", email: sessionRole.email } as AdminSessionState;
+  }
 
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      setState(getState(session));
-    });
+  if (sessionRole.status === "user") {
+    return { status: "forbidden", email: sessionRole.email } as AdminSessionState;
+  }
 
-    return () => {
-      mounted = false;
-      data.subscription.unsubscribe();
-    };
-  }, []);
-
-  return state;
+  return { status: "signed-out" } as AdminSessionState;
 }
