@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm run typecheck
+      - name: Build all packages
+        run: pnpm -r --if-present run build
+
+  e2e:
+    needs: build
+    if: ${{ secrets.E2E_ADMIN_EMAIL != '' && secrets.E2E_ADMIN_PASSWORD != '' }}
+    runs-on: ubuntu-latest
+    env:
+      E2E_BASE_URL: http://127.0.0.1:5173
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      VITE_API_BASE_URL: http://127.0.0.1:3000
+      CORS_ORIGIN: http://127.0.0.1:5173
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright browser
+        run: pnpm --filter ./e2e exec playwright install --with-deps chromium
+      - name: Start API server
+        run: pnpm --filter @workspace/api-server dev > api.log 2>&1 &
+      - name: Start frontend
+        run: pnpm --filter @workspace/solora dev > web.log 2>&1 &
+      - name: Wait for services
+        run: |
+          for i in {1..60}; do
+            if curl -sf http://127.0.0.1:3000/api/health > /dev/null && curl -sf http://127.0.0.1:5173 > /dev/null; then
+              echo "Services are ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Services failed to start"
+          exit 1
+      - name: Run Playwright tests
+        run: pnpm --filter ./e2e test
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+      - name: Upload service logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: service-logs
+          path: |
+            api.log
+            web.log

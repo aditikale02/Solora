@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import SoloraLogo from "./SoloraLogo";
 import PremiumButton from "./PremiumButton";
+import { useLeadInquiry } from "@/components/lead/LeadInquiryProvider";
 
 const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -16,6 +17,7 @@ const navItems = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
+  const { openInquiry } = useLeadInquiry();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 80);
@@ -69,7 +71,15 @@ export default function Navbar() {
         </nav>
 
         {/* CTA */}
-        <PremiumButton variant="secondary" onClick={() => scrollTo("selector")}>
+        <PremiumButton
+          variant="secondary"
+          onClick={() =>
+            openInquiry({
+              mode: "lead",
+              source: "navbar_cta",
+            })
+          }
+        >
           Begin Your Journey
         </PremiumButton>
       </div>

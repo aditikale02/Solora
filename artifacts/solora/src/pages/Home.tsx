@@ -7,7 +7,8 @@ import PeacefulArrival from "@/components/PeacefulArrival";
 import EmotionalOrbit from "@/components/EmotionalOrbit";
 import ExplorerTransition from "@/components/ExplorerTransition";
 import TripSelector from "@/components/TripSelector";
-import CinematicDestinations from "@/components/CinematicDestinations";
+import React, { Suspense } from "react";
+const CinematicDestinations = React.lazy(() => import("@/components/CinematicDestinations"));
 import MemoryScroller from "@/components/MemoryScroller";
 import StoriesRoad from "@/components/StoriesRoad";
 import CommunityTrust from "@/components/CommunityTrust";
@@ -61,7 +62,9 @@ export default function Home() {
       <TripSelector />
 
       {/* 6. Cinematic India Destinations — id="destinations" */}
-      <CinematicDestinations />
+      <Suspense fallback={<div id="destinations" className="min-h-[40vh] bg-[#F5F0E8]" />}> 
+        <CinematicDestinations />
+      </Suspense>
 
       {/* 7. Memory Scroller — id="memories" */}
       <MemoryScroller />

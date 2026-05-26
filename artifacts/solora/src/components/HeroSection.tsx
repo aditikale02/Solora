@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import PremiumButton from "./PremiumButton";
 import heroCityImg from "@/assets/images/hero-chaos-city.jpg";
 import heroMountainImg from "@/assets/images/hero-mountain-valley.jpg";
+import { useLeadInquiry } from "@/components/lead/LeadInquiryProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -35,6 +36,7 @@ const notifications: Notif[] = [
 ];
 
 export default function HeroSection() {
+  const { openInquiry } = useLeadInquiry();
   const containerRef   = useRef<HTMLDivElement>(null);
   const chaosRef       = useRef<HTMLDivElement>(null);
   const gatewayRef     = useRef<HTMLDivElement>(null);
@@ -291,7 +293,17 @@ export default function HeroSection() {
             transition={{ duration: 1, delay: 1.2 }}
             className="mt-12 flex justify-center"
           >
-            <PremiumButton variant="primary">Begin My Journey</PremiumButton>
+            <PremiumButton
+              variant="primary"
+              onClick={() =>
+                openInquiry({
+                  mode: "lead",
+                  source: "hero_cta",
+                })
+              }
+            >
+              Begin My Journey
+            </PremiumButton>
           </motion.div>
         </div>
       </div>

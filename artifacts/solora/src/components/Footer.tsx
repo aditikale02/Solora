@@ -1,7 +1,11 @@
 import { Link } from "wouter";
 import SoloraLogo from "./SoloraLogo";
+import NewsletterSignup from "./NewsletterSignup";
+import { useLeadInquiry } from "@/components/lead/LeadInquiryProvider";
 
 export default function Footer() {
+  const { openInquiry } = useLeadInquiry();
+
   return (
     <footer
       className="relative pt-24 pb-10 px-6 text-[#F7F0E6] overflow-hidden"
@@ -38,16 +42,7 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div className="pt-4 max-w-xs">
-            <div className="relative border-b border-[#F7F0E6]/20 focus-within:border-[#C9A96E] transition-colors duration-300">
-              <input
-                type="email"
-                placeholder="your email"
-                className="w-full bg-transparent py-2 pr-8 outline-none font-sans text-sm placeholder:text-[#F7F0E6]/25 text-[#F7F0E6]/80"
-              />
-              <button className="absolute right-0 top-1/2 -translate-y-1/2 text-[#C9A96E] hover:text-[#F7F0E6] transition-colors duration-300 cursor-none font-sans text-sm">
-                →
-              </button>
-            </div>
+            <NewsletterSignup />
             <p className="font-sans text-[9px] tracking-widest text-[#F7F0E6]/25 uppercase mt-2">No spam. Only wanderlust.</p>
           </div>
         </div>
@@ -81,9 +76,23 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="text-[#C9A96E] tracking-[0.25em] uppercase text-[10px] mb-5">Safety & Support</h4>
             <ul className="space-y-3 text-[#F7F0E6]/55">
-              {["FAQs", "Contact Us", "Solo Safety Guide", "Privacy Policy"].map((l) => (
-                <li key={l}><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">{l}</Link></li>
-              ))}
+              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">FAQs</Link></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() =>
+                    openInquiry({
+                      mode: "contact",
+                      source: "footer_contact",
+                    })
+                  }
+                  className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none text-left"
+                >
+                  Contact Us
+                </button>
+              </li>
+              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">Solo Safety Guide</Link></li>
+              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>

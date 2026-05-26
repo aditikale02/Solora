@@ -1,5 +1,6 @@
 export type CustomFetchOptions = RequestInit & {
   responseType?: "json" | "text" | "blob" | "auto";
+  timeoutMs?: number;
 };
 
 export type ErrorType<T = unknown> = ApiError<T>;
@@ -327,7 +328,7 @@ export async function customFetch<T = unknown>(
   options: CustomFetchOptions = {},
 ): Promise<T> {
   input = applyBaseUrl(input);
-  const { responseType = "auto", headers: headersInit, ...init } = options;
+  const { responseType = "auto", timeoutMs, headers: headersInit, ...init } = options;
 
   const method = resolveMethod(input, init.method);
 
@@ -359,13 +360,47 @@ export async function customFetch<T = unknown>(
   }
 
   const requestInfo = { method, url: resolveUrl(input) };
+  const timeoutController = timeoutMs ? new AbortController() : null;
+  let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
+  let abortListener: (() => void) | undefined;
 
-  const response = await fetch(input, { ...init, method, headers });
+  if (timeoutController) {
+    if (init.signal?.aborted) {
+      timeoutController.abort(init.signal.reason);
+    } else if (init.signal) {
+      abortListener = () => timeoutController.abort(init.signal?.reason);
+      init.signal.addEventListener("abort", abortListener, { once: true });
+    }
 
-  if (!response.ok) {
-    const errorData = await parseErrorBody(response, method);
-    throw new ApiError(response, errorData, requestInfo);
+    timeoutHandle = setTimeout(() => {
+      timeoutController.abort(new Error(`Request timed out after ${timeoutMs}ms.`));
+    }, timeoutMs);
+
+    init.signal = timeoutController.signal;
   }
 
-  return (await parseSuccessBody(response, responseType, requestInfo)) as T;
+  try {
+    const response = await fetch(input, { ...init, method, headers });
+
+    if (!response.ok) {
+      const errorData = await parseErrorBody(response, method);
+      throw new ApiError(response, errorData, requestInfo);
+    }
+
+    return (await parseSuccessBody(response, responseType, requestInfo)) as T;
+  } catch (error) {
+    if (timeoutController?.signal.aborted && timeoutMs) {
+      throw new Error(`Request timed out after ${timeoutMs}ms.`);
+    }
+
+    throw error;
+  } finally {
+    if (timeoutHandle) {
+      clearTimeout(timeoutHandle);
+    }
+
+    if (abortListener && init.signal) {
+      init.signal.removeEventListener("abort", abortListener);
+    }
+  }
 }

@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import finalCtaImg from "@/assets/images/ocean-cliff-sunrise.jpg";
 import PremiumButton from "./PremiumButton";
+import { useLeadInquiry } from "@/components/lead/LeadInquiryProvider";
 
 export default function FinalCTA() {
+  const { openInquiry } = useLeadInquiry();
+
   return (
     <section id="begin" className="relative h-screen w-full flex items-center justify-center bg-[#1A1714]">
       <div className="absolute inset-0 overflow-hidden">
@@ -38,10 +41,27 @@ export default function FinalCTA() {
           transition={{ duration: 1, delay: 0.2 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-6"
         >
-          <PremiumButton variant="primary">
+          <PremiumButton
+            variant="primary"
+            onClick={() =>
+              openInquiry({
+                mode: "lead",
+                source: "final_cta_primary",
+              })
+            }
+          >
             Start My Journey
           </PremiumButton>
-          <PremiumButton variant="secondary">
+          <PremiumButton
+            variant="secondary"
+            onClick={() =>
+              openInquiry({
+                mode: "lead",
+                source: "final_cta_secondary",
+                serviceSlug: "custom-journey-design",
+              })
+            }
+          >
             Plan My Solo Trip
           </PremiumButton>
         </motion.div>

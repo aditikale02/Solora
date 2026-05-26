@@ -2,6 +2,7 @@ minimumReleaseAge: 1440
 
 packages:
   - artifacts/*
+  - e2e
   - lib/*
   - lib/integrations/*
   - scripts
@@ -120,3 +121,4 @@ overrides:
 
 allowBuilds:
   esbuild: false
+  sharp: set this to true or false

@@ -5,9 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
-    "build": "vite build --config vite.config.ts",
+    "optimize:images": "node ./scripts/optimize-images.js",
+    "build": "node ./scripts/optimize-images.js && vite build --config vite.config.ts",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@studio-freight/lenis": "^1.0.42",
+    "@supabase/supabase-js": "^2.57.4",
+    "@workspace/api-client-react": "workspace:*",
+    "@workspace/api-zod": "workspace:*",
+    "gsap": "^3.15.0"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -48,7 +56,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "@workspace/api-client-react": "workspace:*",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "cmdk": "^1.1.1",
@@ -74,8 +81,7 @@
     "wouter": "^3.3.5",
     "zod": "catalog:"
   },
-  "dependencies": {
-    "@studio-freight/lenis": "^1.0.42",
-    "gsap": "^3.15.0"
-  }
+  "dependenciesMeta": {},
+  "peerDependenciesMeta": {},
+  "bundledDependencies": []
 }
