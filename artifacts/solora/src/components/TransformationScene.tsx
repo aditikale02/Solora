@@ -1,8 +1,32 @@
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 import oceanCliffImg from "@/assets/images/ocean-cliff-sunrise.jpg";
 import PremiumButton from "./PremiumButton";
+import { useLeadInquiry } from "@/components/lead/LeadInquiryProvider";
+import { useSessionRole } from "@/hooks/use-session-role";
 
 export default function TransformationScene() {
+  const [, navigate] = useLocation();
+  const { openInquiry } = useLeadInquiry();
+  const session = useSessionRole();
+
+  const handleJourneyClick = () => {
+    if (session.status === "admin") {
+      navigate("/admin/dashboard");
+      return;
+    }
+
+    if (session.status === "user") {
+      openInquiry({
+        mode: "lead",
+        source: "hero_cta",
+      });
+      return;
+    }
+
+    navigate("/auth");
+  };
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden flex items-center justify-center">
 
@@ -124,7 +148,7 @@ export default function TransformationScene() {
           viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.8 }}
         >
-          <PremiumButton variant="primary">Begin Your Journey</PremiumButton>
+          <PremiumButton variant="primary" onClick={handleJourneyClick}>Begin Your Journey</PremiumButton>
         </motion.div>
       </div>
 

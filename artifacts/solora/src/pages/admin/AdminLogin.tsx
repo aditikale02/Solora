@@ -57,7 +57,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="border-[#C9A96E]/25 bg-[#F7F0E6] text-[#1A1714]"
+                className="border-[#C9A96E]/25 bg-[#F7F0E6] text-[#1A1714] caret-[#1A1714] placeholder:text-[#1A1714]/45 focus-visible:border-[#C9A96E]/70 focus-visible:ring-2 focus-visible:ring-[#C9A96E]/30 focus-visible:ring-offset-0"
               autoComplete="email"
               required
             />
@@ -69,7 +69,7 @@ export default function AdminLogin() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="border-[#C9A96E]/25 bg-[#F7F0E6] text-[#1A1714]"
+                className="border-[#C9A96E]/25 bg-[#F7F0E6] text-[#1A1714] caret-[#1A1714] placeholder:text-[#1A1714]/45 focus-visible:border-[#C9A96E]/70 focus-visible:ring-2 focus-visible:ring-[#C9A96E]/30 focus-visible:ring-offset-0"
               autoComplete="current-password"
               required
             />

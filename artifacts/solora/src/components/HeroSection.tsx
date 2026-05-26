@@ -2,10 +2,12 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 import PremiumButton from "./PremiumButton";
 import heroCityImg from "@/assets/images/hero-chaos-city.jpg";
 import heroMountainImg from "@/assets/images/hero-mountain-valley.jpg";
 import { useLeadInquiry } from "@/components/lead/LeadInquiryProvider";
+import { useSessionRole } from "@/hooks/use-session-role";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,6 +39,8 @@ const notifications: Notif[] = [
 
 export default function HeroSection() {
   const { openInquiry } = useLeadInquiry();
+  const session = useSessionRole();
+  const [, navigate] = useLocation();
   const containerRef   = useRef<HTMLDivElement>(null);
   const chaosRef       = useRef<HTMLDivElement>(null);
   const gatewayRef     = useRef<HTMLDivElement>(null);
@@ -46,6 +50,23 @@ export default function HeroSection() {
   const doorLeftRef    = useRef<HTMLDivElement>(null);
   const doorRightRef   = useRef<HTMLDivElement>(null);
   const gateGlowRef    = useRef<HTMLDivElement>(null);
+
+  const handleJourneyClick = () => {
+    if (session.status === "admin") {
+      navigate("/admin/dashboard");
+      return;
+    }
+
+    if (session.status === "user") {
+      openInquiry({
+        mode: "lead",
+        source: "hero_cta",
+      });
+      return;
+    }
+
+    navigate("/auth");
+  };
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -105,62 +126,33 @@ export default function HeroSection() {
       <div ref={chaosRef} className="absolute inset-0">
 
         {/* City photography — desaturated, cool-toned */}
-        <div
-          className="absolute inset-0 animate-[slowZoom_22s_ease-in-out_infinite_alternate]"
-          style={{
-            backgroundImage: `url(${heroCityImg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            filter: "saturate(0.28) brightness(0.68) hue-rotate(-15deg)",
-          }}
+        <img
+          src={heroCityImg}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full animate-[slowZoom_22s_ease-in-out_infinite_alternate] object-cover [filter:saturate(0.28)_brightness(0.68)_hue-rotate(-15deg)]"
         />
 
         {/* Cool-neutral overlay */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(14,18,28,0.5) 0%,rgba(14,18,28,0.15) 40%,rgba(14,18,28,0.7) 100%)" }} />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(14,18,28,0.5)_0%,rgba(14,18,28,0.15)_40%,rgba(14,18,28,0.7)_100%)]" />
 
         {/* Edge vignette */}
-        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center,transparent 42%,rgba(5,5,8,0.6) 100%)" }} />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_42%,rgba(5,5,8,0.6)_100%)]" />
 
         {/* Blue screen glow — digital fatigue — bleeds from bottom */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[35%] pointer-events-none"
-          style={{ background: "linear-gradient(to top,rgba(30,60,140,0.12) 0%,transparent 100%)" }}
-        />
+        <div className="absolute bottom-0 left-0 right-0 h-[35%] pointer-events-none bg-[linear-gradient(to_top,rgba(30,60,140,0.12)_0%,transparent_100%)]" />
 
         {/* FOMO travel glow — warm amber from top-right (someone else's highlight reel) */}
-        <div
-          className="absolute top-0 right-0 w-[40%] h-[45%] pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at 80% 20%,rgba(201,130,30,0.1) 0%,transparent 65%)" }}
-        />
+        <div className="absolute top-0 right-0 h-[45%] w-[40%] pointer-events-none bg-[radial-gradient(ellipse_at_80%_20%,rgba(201,130,30,0.1)_0%,transparent_65%)]" />
 
         {/* Notification bubbles */}
         <div className="absolute inset-0 pointer-events-none">
           {notifications.map((n, i) => {
-            const isUrgent = 'urgent' in n && n.urgent;
-            const isFomo   = 'fomo' in n && n.fomo;
-            const isSmall  = n.size === "sm";
-            const isXs     = n.size === "xs";
-
             return (
               <div
                 key={i}
-                className="absolute backdrop-blur-md animate-[float_var(--dur)_ease-in-out_infinite] font-sans"
-                style={{
-                  ...n.pos as object,
-                  animationDuration: `${n.dur}s`,
-                  animationDelay: `${n.delay}s`,
-                  padding: isXs ? "5px 12px" : isSmall ? "6px 14px" : "7px 16px",
-                  fontSize: isXs ? "10px" : isSmall ? "11px" : "12px",
-                  background: isUrgent
-                    ? "rgba(200,50,30,0.12)"
-                    : isFomo
-                    ? "rgba(201,169,110,0.1)"
-                    : "rgba(255,248,235,0.07)",
-                  border: `1px solid ${isUrgent ? "rgba(200,80,50,0.5)" : isFomo ? "rgba(201,169,110,0.55)" : "rgba(201,169,110,0.35)"}`,
-                  borderRadius: "12px",
-                  color: isUrgent ? "rgba(255,200,180,0.9)" : "rgba(247,240,230,0.85)",
-                  animation: `float ${n.dur}s ease-in-out infinite ${n.delay}s, notification-ping 3s ease-out infinite ${n.delay * 0.5}s`,
-                }}
+                data-notification-index={i}
+                className="hero-notification"
               >
                 {n.icon} {n.text}
               </div>
@@ -183,7 +175,7 @@ export default function HeroSection() {
           FOG LAYER
       ══════════════════════════════════════ */}
       <div ref={fogRef} className="absolute inset-0 opacity-0 pointer-events-none z-10 flex items-center justify-center">
-        <div className="w-[90vw] h-[90vw] rounded-full" style={{ background: "radial-gradient(ellipse,rgba(247,220,170,0.12) 0%,rgba(255,255,255,0.04) 50%,transparent 70%)", filter: "blur(80px)" }} />
+        <div className="h-[90vw] w-[90vw] rounded-full bg-[radial-gradient(ellipse,rgba(247,220,170,0.12)_0%,rgba(255,255,255,0.04)_50%,transparent_70%)] blur-[80px]" />
       </div>
 
       {/* ══════════════════════════════════════
@@ -191,33 +183,25 @@ export default function HeroSection() {
       ══════════════════════════════════════ */}
       <div
         ref={gatewayRef}
-        className="absolute inset-0 flex items-center justify-center opacity-0 z-20 pointer-events-none"
-        style={{ transform: "scale(0.14)" }}
+        className="absolute inset-0 z-20 flex scale-[0.14] items-center justify-center opacity-0 pointer-events-none"
       >
         <div
-          className="relative overflow-hidden"
-          style={{
-            width: "300px", height: "500px",
-            border: "4px solid rgba(201,169,110,0.8)",
-            borderRadius: "150px 150px 0 0",
-            boxShadow: "0 0 60px rgba(201,169,110,0.6), 0 0 120px rgba(201,169,110,0.25)",
-          }}
+          className="relative h-[500px] w-[300px] overflow-hidden rounded-t-[150px] border-[4px] border-[rgba(201,169,110,0.8)] shadow-[0_0_60px_rgba(201,169,110,0.6),0_0_120px_rgba(201,169,110,0.25)]"
         >
           {/* Gate interior — the other world glimpse */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#87CEEB] via-[#d4a96e]/60 to-[#2d4a1e]" />
-          <div className="absolute bottom-0 w-full h-[40%] bg-[#1A2A14]" style={{ clipPath: "polygon(0 100%,100% 100%,100% 40%,70% 0,30% 60%,0 20%)" }} />
+          <div className="absolute bottom-0 h-[40%] w-full bg-[#1A2A14] [clip-path:polygon(0_100%,100%_100%,100%_40%,70%_0,30%_60%,0_20%)]" />
 
           {/* Gate ambient glow — inner light */}
           <div
             ref={gateGlowRef}
-            className="absolute inset-0 opacity-0"
-            style={{ background: "radial-gradient(ellipse at 50% 40%,rgba(247,220,170,0.55) 0%,transparent 65%)" }}
+            className="absolute inset-0 opacity-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(247,220,170,0.55)_0%,transparent_65%)]"
           />
 
           {/* Doors */}
           <div className="absolute inset-0 flex">
-            <div ref={doorLeftRef}  className="w-1/2 h-full bg-[#1A1714] border-r border-[#C9A96E]/20" style={{ willChange: "transform" }} />
-            <div ref={doorRightRef} className="w-1/2 h-full bg-[#1A1714] border-l border-[#C9A96E]/20" style={{ willChange: "transform" }} />
+            <div ref={doorLeftRef}  className="h-full w-1/2 border-r border-[#C9A96E]/20 bg-[#1A1714] will-change-transform" />
+            <div ref={doorRightRef} className="h-full w-1/2 border-l border-[#C9A96E]/20 bg-[#1A1714] will-change-transform" />
           </div>
         </div>
       </div>
@@ -227,8 +211,7 @@ export default function HeroSection() {
       ══════════════════════════════════════ */}
       <div
         ref={bloomRef}
-        className="absolute inset-0 opacity-0 z-30 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 50%,#f5ede0 0%,#ede0c8 60%,#d4b896 100%)", willChange: "opacity" }}
+        className="absolute inset-0 z-30 pointer-events-none opacity-0 bg-[radial-gradient(ellipse_at_50%_50%,#f5ede0_0%,#ede0c8_60%,#d4b896_100%)] will-change-[opacity]"
       />
 
       {/* ══════════════════════════════════════
@@ -236,31 +219,29 @@ export default function HeroSection() {
       ══════════════════════════════════════ */}
       <div ref={peacefulRef} className="absolute inset-0 opacity-0 z-40 flex flex-col items-center justify-center">
 
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url(${heroMountainImg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center 40%",
-          }}
+        <img
+          src={heroMountainImg}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover object-[center_40%]"
         />
 
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(247,240,230,0.32) 0%,rgba(247,240,230,0.08) 40%,rgba(247,240,230,0.5) 100%)" }} />
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(247,240,230,0.32)_0%,rgba(247,240,230,0.08)_40%,rgba(247,240,230,0.5)_100%)]" />
 
         {/* Drifting particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(16)].map((_, i) => (
             <div
               key={i}
-              className="absolute rounded-full bg-[rgba(201,169,110,0.3)] animate-[floatUp_10s_linear_infinite]"
-              style={{ width: `${1 + (i % 2)}px`, height: `${1 + (i % 2)}px`, left: `${(i * 6.25) % 100}%`, top: `${80 + (i % 4) * 5}%`, animationDelay: `${i * 0.6}s` }}
+              data-particle-index={i}
+              className="hero-particle"
             />
           ))}
         </div>
 
         {/* Tagline — positioned 10vh down from center */}
         <div className="relative z-10 text-center px-6 mt-[10vh]">
-          <h1 className="font-serif text-[6vw] md:text-[5vw] leading-[1.1] font-light tracking-[0.02em] text-[#1A1714]" style={{ textShadow: "0 2px 40px rgba(247,240,230,0.6)" }}>
+          <h1 className="font-serif text-[6vw] md:text-[5vw] leading-[1.1] font-light tracking-[0.02em] text-[#1A1714] [text-shadow:0_2px_40px_rgba(247,240,230,0.6)]">
             <span className="block overflow-hidden">
               <motion.span className="block" initial={{ y: 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
                 SOME JOURNEYS BEGIN
@@ -293,15 +274,7 @@ export default function HeroSection() {
             transition={{ duration: 1, delay: 1.2 }}
             className="mt-12 flex justify-center"
           >
-            <PremiumButton
-              variant="primary"
-              onClick={() =>
-                openInquiry({
-                  mode: "lead",
-                  source: "hero_cta",
-                })
-              }
-            >
+            <PremiumButton variant="primary" onClick={handleJourneyClick}>
               Begin My Journey
             </PremiumButton>
           </motion.div>

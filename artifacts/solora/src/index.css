@@ -280,6 +280,190 @@
   100% { transform: translateY(-64px) translateX(10px) scale(0.3); opacity: 0; }
 }
 
+.hero-notification {
+  position: absolute;
+  backdrop-filter: blur(12px);
+  animation:
+    float var(--notif-duration) ease-in-out infinite var(--notif-delay),
+    notification-ping 3s ease-out infinite calc(var(--notif-delay) * 0.5);
+  padding: var(--notif-padding);
+  font-size: var(--notif-font-size);
+  background: var(--notif-bg);
+  border: 1px solid var(--notif-border);
+  border-radius: 12px;
+  color: var(--notif-color);
+  font-family: var(--app-font-sans);
+}
+
+[data-notification-index="0"] {
+  top: 18%;
+  left: 17%;
+  --notif-duration: 6s;
+  --notif-delay: 0s;
+  --notif-padding: 7px 16px;
+  --notif-font-size: 12px;
+  --notif-bg: rgba(255, 248, 235, 0.07);
+  --notif-border: rgba(201, 169, 110, 0.35);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="1"] {
+  top: 38%;
+  right: 22%;
+  --notif-duration: 5s;
+  --notif-delay: 1s;
+  --notif-padding: 7px 16px;
+  --notif-font-size: 12px;
+  --notif-bg: rgba(255, 248, 235, 0.07);
+  --notif-border: rgba(201, 169, 110, 0.35);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="2"] {
+  bottom: 32%;
+  left: 28%;
+  --notif-duration: 7s;
+  --notif-delay: 0.5s;
+  --notif-padding: 7px 16px;
+  --notif-font-size: 12px;
+  --notif-bg: rgba(255, 248, 235, 0.07);
+  --notif-border: rgba(201, 169, 110, 0.35);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="3"] {
+  top: 58%;
+  right: 14%;
+  --notif-duration: 4s;
+  --notif-delay: 2s;
+  --notif-padding: 7px 16px;
+  --notif-font-size: 12px;
+  --notif-bg: rgba(255, 248, 235, 0.07);
+  --notif-border: rgba(201, 169, 110, 0.35);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="4"] {
+  top: 26%;
+  right: 38%;
+  --notif-duration: 5.5s;
+  --notif-delay: 1.5s;
+  --notif-padding: 6px 14px;
+  --notif-font-size: 11px;
+  --notif-bg: rgba(200, 50, 30, 0.12);
+  --notif-border: rgba(200, 80, 50, 0.5);
+  --notif-color: rgba(255, 200, 180, 0.9);
+}
+
+[data-notification-index="5"] {
+  bottom: 42%;
+  right: 30%;
+  --notif-duration: 6.5s;
+  --notif-delay: 0.8s;
+  --notif-padding: 6px 14px;
+  --notif-font-size: 11px;
+  --notif-bg: rgba(200, 50, 30, 0.12);
+  --notif-border: rgba(200, 80, 50, 0.5);
+  --notif-color: rgba(255, 200, 180, 0.9);
+}
+
+[data-notification-index="6"] {
+  top: 72%;
+  left: 14%;
+  --notif-duration: 7s;
+  --notif-delay: 3s;
+  --notif-padding: 6px 14px;
+  --notif-font-size: 11px;
+  --notif-bg: rgba(201, 169, 110, 0.1);
+  --notif-border: rgba(201, 169, 110, 0.55);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="7"] {
+  top: 14%;
+  right: 16%;
+  --notif-duration: 5s;
+  --notif-delay: 2.5s;
+  --notif-padding: 6px 14px;
+  --notif-font-size: 11px;
+  --notif-bg: rgba(255, 248, 235, 0.07);
+  --notif-border: rgba(201, 169, 110, 0.35);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="8"] {
+  bottom: 18%;
+  right: 34%;
+  --notif-duration: 8s;
+  --notif-delay: 1.8s;
+  --notif-padding: 5px 12px;
+  --notif-font-size: 10px;
+  --notif-bg: rgba(255, 248, 235, 0.07);
+  --notif-border: rgba(201, 169, 110, 0.35);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="9"] {
+  bottom: 52%;
+  left: 8%;
+  --notif-duration: 6s;
+  --notif-delay: 4s;
+  --notif-padding: 5px 12px;
+  --notif-font-size: 10px;
+  --notif-bg: rgba(200, 50, 30, 0.12);
+  --notif-border: rgba(200, 80, 50, 0.5);
+  --notif-color: rgba(255, 200, 180, 0.9);
+}
+
+[data-notification-index="10"] {
+  top: 48%;
+  left: 6%;
+  --notif-duration: 5.5s;
+  --notif-delay: 2.8s;
+  --notif-padding: 6px 14px;
+  --notif-font-size: 11px;
+  --notif-bg: rgba(201, 169, 110, 0.1);
+  --notif-border: rgba(201, 169, 110, 0.55);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+[data-notification-index="11"] {
+  top: 82%;
+  right: 18%;
+  --notif-duration: 7s;
+  --notif-delay: 3.5s;
+  --notif-padding: 5px 12px;
+  --notif-font-size: 10px;
+  --notif-bg: rgba(255, 248, 235, 0.07);
+  --notif-border: rgba(201, 169, 110, 0.35);
+  --notif-color: rgba(247, 240, 230, 0.85);
+}
+
+.hero-particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(201, 169, 110, 0.3);
+  animation: floatUp 10s linear infinite;
+}
+
+[data-particle-index="0"] { width: 1px; height: 1px; left: 0%; top: 80%; animation-delay: 0s; }
+[data-particle-index="1"] { width: 2px; height: 2px; left: 6.25%; top: 85%; animation-delay: 0.6s; }
+[data-particle-index="2"] { width: 1px; height: 1px; left: 12.5%; top: 90%; animation-delay: 1.2s; }
+[data-particle-index="3"] { width: 2px; height: 2px; left: 18.75%; top: 95%; animation-delay: 1.8s; }
+[data-particle-index="4"] { width: 1px; height: 1px; left: 25%; top: 80%; animation-delay: 2.4s; }
+[data-particle-index="5"] { width: 2px; height: 2px; left: 31.25%; top: 85%; animation-delay: 3s; }
+[data-particle-index="6"] { width: 1px; height: 1px; left: 37.5%; top: 90%; animation-delay: 3.6s; }
+[data-particle-index="7"] { width: 2px; height: 2px; left: 43.75%; top: 95%; animation-delay: 4.2s; }
+[data-particle-index="8"] { width: 1px; height: 1px; left: 50%; top: 80%; animation-delay: 4.8s; }
+[data-particle-index="9"] { width: 2px; height: 2px; left: 56.25%; top: 85%; animation-delay: 5.4s; }
+[data-particle-index="10"] { width: 1px; height: 1px; left: 62.5%; top: 90%; animation-delay: 6s; }
+[data-particle-index="11"] { width: 2px; height: 2px; left: 68.75%; top: 95%; animation-delay: 6.6s; }
+[data-particle-index="12"] { width: 1px; height: 1px; left: 75%; top: 80%; animation-delay: 7.2s; }
+[data-particle-index="13"] { width: 2px; height: 2px; left: 81.25%; top: 85%; animation-delay: 7.8s; }
+[data-particle-index="14"] { width: 1px; height: 1px; left: 87.5%; top: 90%; animation-delay: 8.4s; }
+[data-particle-index="15"] { width: 2px; height: 2px; left: 93.75%; top: 95%; animation-delay: 9s; }
+
+
 @keyframes dest-breathe {
   0%, 100% { filter: brightness(0.88) saturate(0.95); }
   50%       { filter: brightness(0.92) saturate(1.0); }

@@ -14,11 +14,14 @@ function AuthBackdrop() {
   return (
     <div className="absolute inset-0 overflow-hidden bg-[#0F0D0A]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(201,169,110,0.24),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(141,188,156,0.16),transparent_30%),linear-gradient(180deg,rgba(15,13,10,0.96),rgba(15,13,10,0.82))]" />
-      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "url(https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=80)", backgroundSize: "cover", backgroundPosition: "center" }} />
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center opacity-30" />
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(0,0,0,0.35),rgba(0,0,0,0.08))]" />
     </div>
   );
 }
+
+const glassInputClassName =
+  "border-white/10 bg-black/20 text-[#F7F0E6] caret-[#F7F0E6] placeholder:text-[#F7F0E6]/55 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus-visible:border-[#C9A96E]/70 focus-visible:ring-2 focus-visible:ring-[#C9A96E]/35 focus-visible:ring-offset-0 selection:bg-[#C9A96E]/30 selection:text-[#F7F0E6]";
 
 export default function AuthPage() {
   const [, navigate] = useLocation();
@@ -183,7 +186,7 @@ export default function AuthPage() {
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    className="border-white/10 bg-black/20 text-[#F7F0E6] placeholder:text-[#F7F0E6]/30"
+                    className={glassInputClassName}
                     autoComplete="email"
                     required
                   />
@@ -195,7 +198,7 @@ export default function AuthPage() {
                     type="password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="border-white/10 bg-black/20 text-[#F7F0E6] placeholder:text-[#F7F0E6]/30"
+                    className={glassInputClassName}
                     autoComplete="current-password"
                     required
                   />
@@ -212,7 +215,7 @@ export default function AuthPage() {
                     id="full-name"
                     value={fullName}
                     onChange={(event) => setFullName(event.target.value)}
-                    className="border-white/10 bg-black/20 text-[#F7F0E6] placeholder:text-[#F7F0E6]/30"
+                    className={glassInputClassName}
                     autoComplete="name"
                     required
                   />
@@ -224,7 +227,7 @@ export default function AuthPage() {
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    className="border-white/10 bg-black/20 text-[#F7F0E6] placeholder:text-[#F7F0E6]/30"
+                    className={glassInputClassName}
                     autoComplete="email"
                     required
                   />
@@ -236,7 +239,7 @@ export default function AuthPage() {
                     type="password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    className="border-white/10 bg-black/20 text-[#F7F0E6] placeholder:text-[#F7F0E6]/30"
+                    className={glassInputClassName}
                     autoComplete="new-password"
                     required
                   />
@@ -248,7 +251,7 @@ export default function AuthPage() {
                     type="password"
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
-                    className="border-white/10 bg-black/20 text-[#F7F0E6] placeholder:text-[#F7F0E6]/30"
+                    className={glassInputClassName}
                     autoComplete="new-password"
                     required
                   />
