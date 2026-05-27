@@ -1,7 +1,5 @@
 import { Router, type IRouter } from "express";
 import { sessionRoleSchema } from "@workspace/api-zod";
-import { adminUsersTable, db } from "@workspace/db";
-import { eq } from "drizzle-orm";
 import { getBearerToken, isAdminEmail } from "../middleware/admin-auth";
 import { supabaseAdmin } from "../lib/supabase";
 
@@ -23,13 +21,7 @@ router.get("/auth/role", async (req, res, next) => {
 
     const email = data.user.email.toLowerCase();
     const metadataName = (data.user.user_metadata?.full_name as string | undefined) ?? undefined;
-    const [adminRow] = await db
-      .select({ id: adminUsersTable.id })
-      .from(adminUsersTable)
-      .where(eq(adminUsersTable.email, email))
-      .limit(1);
-
-    const role = (await isAdminEmail(email)) || Boolean(adminRow) ? "admin" : "user";
+    const role = (await isAdminEmail(email)) ? "admin" : "user";
 
     return res.json(
       sessionRoleSchema.parse({

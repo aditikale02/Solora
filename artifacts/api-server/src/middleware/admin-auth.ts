@@ -35,13 +35,17 @@ export async function isAdminEmail(email: string): Promise<boolean> {
     return true;
   }
 
-  const [row] = await db
-    .select({ id: adminUsersTable.id })
-    .from(adminUsersTable)
-    .where(eq(adminUsersTable.email, normalized))
-    .limit(1);
+  try {
+    const [row] = await db
+      .select({ id: adminUsersTable.id })
+      .from(adminUsersTable)
+      .where(eq(adminUsersTable.email, normalized))
+      .limit(1);
 
-  return Boolean(row);
+    return Boolean(row);
+  } catch {
+    return false;
+  }
 }
 
 export async function requireAdmin(
