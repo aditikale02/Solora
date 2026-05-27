@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
-import { fetchSessionRole } from "@workspace/api-client-react";
 import { signInWithPassword } from "@/lib/admin-auth";
+import { isAllowedAdminEmail } from "@/lib/admin-auth";
 import { useSessionRole } from "@/hooks/use-session-role";
 
 function AuthBackdrop() {
@@ -53,9 +53,8 @@ export default function AuthPage() {
     setIsSubmitting(true);
 
     try {
-      await signInWithPassword(email, password);
-      const role = await fetchSessionRole();
-      if (role.role === "admin") {
+      const data = await signInWithPassword(email, password);
+      if (isAllowedAdminEmail(data.user.email ?? email)) {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/dashboard", { replace: true });
@@ -90,8 +89,7 @@ export default function AuthPage() {
       }
 
       if (data.session) {
-        const role = await fetchSessionRole();
-        if (role.role === "admin") {
+        if (isAllowedAdminEmail(data.user?.email ?? email)) {
           navigate("/admin/dashboard", { replace: true });
         } else {
           navigate("/dashboard", { replace: true });
