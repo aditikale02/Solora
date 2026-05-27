@@ -1,5 +1,7 @@
 import { supabase } from "./supabase";
 
+const FALLBACK_ADMIN_EMAILS = new Set(["frostedlogic007@gmail.com"]);
+
 export type AdminSessionState =
   | { status: "loading" }
   | { status: "signed-out" }
@@ -7,12 +9,12 @@ export type AdminSessionState =
   | { status: "signed-in"; email: string };
 
 export function getAdminEmails(): Set<string> {
-  return new Set(
-    (import.meta.env.VITE_ADMIN_EMAILS ?? "")
-      .split(",")
-      .map((email: string) => email.trim().toLowerCase())
-      .filter(Boolean),
-  );
+  const configuredEmails = (import.meta.env.VITE_ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((email: string) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+  return new Set([...configuredEmails, ...FALLBACK_ADMIN_EMAILS]);
 }
 
 export function isAllowedAdminEmail(email: string | null | undefined): boolean {
