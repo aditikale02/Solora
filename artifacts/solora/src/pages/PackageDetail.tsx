@@ -1,20 +1,61 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { fetchPublicPackageBySlug } from "@workspace/api-client-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Bookmark, Check, MapPin } from "lucide-react";
+import {
+  fetchPublicPackageBySlug,
+  fetchSavedPackages,
+  savePackage,
+  unsavePackage,
+} from "@workspace/api-client-react";
+import { Button } from "@/components/ui/button";
+import { LoginPromptDialog } from "@/components/auth/LoginPromptDialog";
 import { useLeadInquiry } from "@/components/lead/LeadInquiryProvider";
+import { useSessionRole } from "@/hooks/use-session-role";
 import { setPageSeo } from "@/lib/seo";
+import { toast } from "sonner";
 
 const fallbackImage = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80";
 
 export default function PackageDetailPage() {
   const { slug } = useParams<{ slug: string }>();
+  const queryClient = useQueryClient();
   const { openInquiry } = useLeadInquiry();
+  const session = useSessionRole();
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  const [loginPromptTitle, setLoginPromptTitle] = useState("Please login to continue");
+  const [loginPromptDescription, setLoginPromptDescription] = useState(
+    "This action is available after login so we can keep your saved items and inquiries connected to your account.",
+  );
 
   const packageQuery = useQuery({
     queryKey: ["public", "package", slug],
     queryFn: () => fetchPublicPackageBySlug(String(slug)),
     enabled: Boolean(slug),
+  });
+
+  const savedPackagesQuery = useQuery({
+    queryKey: ["user", "saved-packages"],
+    queryFn: fetchSavedPackages,
+    enabled: session.status === "user",
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: savePackage,
+    onSuccess: async () => {
+      toast.success("Package saved.");
+      await queryClient.invalidateQueries({ queryKey: ["user", "saved-packages"] });
+    },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "Could not save package."),
+  });
+
+  const unsaveMutation = useMutation({
+    mutationFn: unsavePackage,
+    onSuccess: async () => {
+      toast.success("Package removed from saved trips.");
+      await queryClient.invalidateQueries({ queryKey: ["user", "saved-packages"] });
+    },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "Could not update saved package."),
   });
 
   useEffect(() => {
@@ -27,6 +68,46 @@ export default function PackageDetailPage() {
       packageQuery.data.package.description.slice(0, 150),
     );
   }, [packageQuery.data]);
+
+  const savedPackageIds = useMemo(() => {
+    return new Set((savedPackagesQuery.data ?? []).map((entry) => entry.package.id));
+  }, [savedPackagesQuery.data]);
+
+  function promptLogin(title: string, description: string) {
+    setLoginPromptTitle(title);
+    setLoginPromptDescription(description);
+    setLoginPromptOpen(true);
+  }
+
+  async function handleSave() {
+    if (!packageQuery.data) return;
+
+    if (session.status !== "user") {
+      promptLogin("Please login to save packages", "Saving a package keeps it attached to your account for later browsing.");
+      return;
+    }
+
+    if (savedPackageIds.has(packageQuery.data.package.id)) {
+      await unsaveMutation.mutateAsync(packageQuery.data.package.id);
+      return;
+    }
+
+    await saveMutation.mutateAsync(packageQuery.data.package.id);
+  }
+
+  function handleInquiry(mode: "lead" | "contact") {
+    if (session.status !== "user" && session.status !== "admin") {
+      promptLogin("Please login to continue", "Inquiry shortcuts are available after login so your request stays tied to your profile.");
+      return;
+    }
+
+    if (mode === "lead") {
+      openInquiry({ mode: "lead", source: "website" });
+      return;
+    }
+
+    openInquiry({ mode: "contact", source: "website", subject: `Question about ${packageQuery.data?.package.title ?? "this package"}` });
+  }
 
   if (packageQuery.isLoading) {
     return (
@@ -53,6 +134,11 @@ export default function PackageDetailPage() {
 
   const { package: travelPackage, images } = packageQuery.data;
   const gallery = images.length > 0 ? images : [{ id: "fallback", publicUrl: travelPackage.heroImageUrl || fallbackImage, altText: travelPackage.title, sortOrder: 0, packageId: travelPackage.id, isHero: true, createdAt: new Date() }];
+  const tags = travelPackage.features
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .slice(0, 4);
 
   return (
     <main className="min-h-screen bg-[#F7F2EC] px-4 py-10 md:px-8">
@@ -70,25 +156,36 @@ export default function PackageDetailPage() {
           />
           <div className="p-6">
             <h1 className="font-serif text-4xl text-[#1A1714]">{travelPackage.title}</h1>
-            <p className="mt-2 text-sm text-[#6A5A47]">{travelPackage.destinationName ?? "Destination"} · {travelPackage.durationDays} days</p>
-            <p className="mt-2 text-sm font-medium text-[#1A1714]">{travelPackage.priceCurrency} {travelPackage.priceAmount.toLocaleString()}</p>
+            <p className="mt-2 flex items-center gap-1 text-sm text-[#6A5A47]">
+              <MapPin className="size-4" />
+              {travelPackage.destinationName ?? "Destination"} · {travelPackage.durationDays} days
+            </p>
+            <p className="mt-2 text-sm font-medium text-[#1A1714]">
+              {travelPackage.priceCurrency} {travelPackage.priceAmount.toLocaleString()}
+            </p>
             <p className="mt-4 whitespace-pre-wrap text-[#4A3E31]">{travelPackage.description}</p>
 
-            <div className="mt-6 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => openInquiry({ mode: "lead", source: "website" })}
-                className="rounded-md bg-[#1A1714] px-4 py-2 text-sm text-[#F7F0E6]"
-              >
-                Inquire now
-              </button>
-              <button
-                type="button"
-                onClick={() => openInquiry({ mode: "contact", source: "website", subject: `Question about ${travelPackage.title}` })}
-                className="rounded-md border border-[#D7C6A5] bg-white px-4 py-2 text-sm text-[#1A1714]"
-              >
+            {tags.length ? (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <span key={tag} className="rounded-full border border-[#E3D6C1] bg-[#FBF7F1] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-[#8B6340]">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+
+            <div className="mt-6 grid gap-2 sm:grid-cols-3">
+              <Button type="button" variant="outline" onClick={handleSave} className="border-[#D7C6A5] bg-white text-[#1A1714]">
+                {savedPackageIds.has(travelPackage.id) ? <Check className="mr-2 size-4" /> : <Bookmark className="mr-2 size-4" />}
+                {savedPackageIds.has(travelPackage.id) ? "Saved" : "Save package"}
+              </Button>
+              <Button type="button" onClick={() => handleInquiry("lead")} className="bg-[#1A1714] text-[#F7F0E6] hover:bg-[#2B2520]">
+                Book Now
+              </Button>
+              <Button type="button" variant="outline" onClick={() => handleInquiry("contact")} className="border-[#D7C6A5] bg-white text-[#1A1714]">
                 Ask a question
-              </button>
+              </Button>
             </div>
           </div>
         </section>
@@ -130,6 +227,13 @@ export default function PackageDetailPage() {
           </div>
         </section>
       </div>
+
+      <LoginPromptDialog
+        open={loginPromptOpen}
+        onOpenChange={setLoginPromptOpen}
+        title={loginPromptTitle}
+        description={loginPromptDescription}
+      />
     </main>
   );
 }

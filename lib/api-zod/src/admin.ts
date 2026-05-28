@@ -43,6 +43,7 @@ export const destinationSchema = z.object({
   city: z.string().trim().max(120).default(""),
   shortDescription: z.string().trim().max(500).default(""),
   longDescription: z.string().trim().max(10000).default(""),
+  tags: z.string().trim().max(1000).default(""),
   heroImageUrl: imageUrlSchema,
   bestSeason: z.string().trim().max(120).default(""),
   estimatedBudget: z.string().trim().max(120).default(""),
@@ -64,6 +65,7 @@ export const destinationInputSchema = z.object({
   city: z.string().trim().max(120).default(""),
   shortDescription: z.string().trim().max(500).default(""),
   longDescription: z.string().trim().max(10000).default(""),
+  tags: z.string().trim().max(1000).default(""),
   heroImageUrl: imageUrlSchema.default(""),
   bestSeason: z.string().trim().max(120).default(""),
   estimatedBudget: z.string().trim().max(120).default(""),
@@ -83,6 +85,7 @@ export const packageSchema = z.object({
   durationDays: z.number().int().min(1).max(365),
   priceAmount: z.number().int().min(0).max(100000000),
   priceCurrency: z.string().trim().min(3).max(8),
+  features: z.string().trim().max(5000).default(""),
   heroImageUrl: imageUrlSchema,
   isActive: z.boolean(),
   createdAt: z.coerce.date(),
@@ -97,6 +100,7 @@ export const packageInputSchema = z.object({
   durationDays: z.coerce.number().int().min(1).max(365),
   priceAmount: z.coerce.number().int().min(0).max(100000000),
   priceCurrency: z.string().trim().min(3).max(8).default("INR"),
+  features: z.string().trim().max(5000).default(""),
   heroImageUrl: imageUrlSchema.default(""),
   isActive: z.coerce.boolean().default(true),
 });
@@ -181,6 +185,11 @@ export const adminUploadResponseSchema = z.object({
   image: packageImageSchema,
 });
 
+export const adminDestinationUploadResponseSchema = z.object({
+  upload: adminUploadTokenSchema,
+  image: destinationImageSchema,
+});
+
 export type AdminUser = z.infer<typeof adminUserSchema>;
 export type DestinationCategoryRecord = z.infer<typeof destinationCategorySchema>;
 export type DestinationCategoryInput = z.infer<typeof destinationCategoryInputSchema>;
@@ -198,3 +207,4 @@ export type RecentlyViewedDestinationRecord = z.infer<typeof recentlyViewedDesti
 export type AdminLeadRecord = z.infer<typeof adminLeadSchema>;
 export type AdminUploadToken = z.infer<typeof adminUploadTokenSchema>;
 export type AdminUploadResponse = z.infer<typeof adminUploadResponseSchema>;
+export type AdminDestinationUploadResponse = z.infer<typeof adminDestinationUploadResponseSchema>;

@@ -34,7 +34,7 @@ export default function Footer() {
           {/* Social links */}
           <div className="flex gap-6 pt-2">
             {["Instagram", "X / Twitter", "YouTube"].map((social) => (
-              <a key={social} href="#" className="font-sans text-xs text-[#F7F0E6]/40 hover:text-[#C9A96E] transition-colors duration-300 cursor-none">
+              <a key={social} href="#" className="font-sans text-xs text-[#F7F0E6]/40 hover:text-[#C9A96E] transition-colors duration-300">
                 {social}
               </a>
             ))}
@@ -53,7 +53,7 @@ export default function Footer() {
             <h4 className="text-[#C9A96E] tracking-[0.25em] uppercase text-[10px] mb-5">Explore</h4>
             <ul className="space-y-3 text-[#F7F0E6]/55">
               {["For Healing", "For Silence", "For Adventure", "For Self-Discovery", "For Slow Living"].map((l) => (
-                <li key={l}><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">{l}</Link></li>
+                <li key={l}><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300">{l}</Link></li>
               ))}
             </ul>
           </div>
@@ -61,7 +61,7 @@ export default function Footer() {
             <h4 className="text-[#C9A96E] tracking-[0.25em] uppercase text-[10px] mb-5">Community</h4>
             <ul className="space-y-3 text-[#F7F0E6]/55">
               {["Explorer Stories", "Solo Journals", "Become a Guide", "Testimonials"].map((l) => (
-                <li key={l}><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">{l}</Link></li>
+                <li key={l}><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300">{l}</Link></li>
               ))}
             </ul>
           </div>
@@ -69,14 +69,14 @@ export default function Footer() {
             <h4 className="text-[#C9A96E] tracking-[0.25em] uppercase text-[10px] mb-5">About SOLORA</h4>
             <ul className="space-y-3 text-[#F7F0E6]/55">
               {["Our Philosophy", "The Team", "Careers", "Press"].map((l) => (
-                <li key={l}><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">{l}</Link></li>
+                <li key={l}><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300">{l}</Link></li>
               ))}
             </ul>
           </div>
           <div className="space-y-4">
             <h4 className="text-[#C9A96E] tracking-[0.25em] uppercase text-[10px] mb-5">Safety & Support</h4>
             <ul className="space-y-3 text-[#F7F0E6]/55">
-              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">FAQs</Link></li>
+              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300">FAQs</Link></li>
               <li>
                 <button
                   type="button"
@@ -86,13 +86,13 @@ export default function Footer() {
                       source: "footer_contact",
                     })
                   }
-                  className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none text-left"
+                  className="hover:text-[#F7F0E6] transition-colors duration-300 text-left"
                 >
                   Contact Us
                 </button>
               </li>
-              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">Solo Safety Guide</Link></li>
-              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300 cursor-none">Privacy Policy</Link></li>
+              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300">Solo Safety Guide</Link></li>
+              <li><Link href="#" className="hover:text-[#F7F0E6] transition-colors duration-300">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>
@@ -102,8 +102,8 @@ export default function Footer() {
       <div className="relative z-10 max-w-7xl mx-auto mt-20 pt-8 border-t border-[#F7F0E6]/8 flex flex-col md:flex-row justify-between items-center gap-3 text-[10px] font-sans text-[#F7F0E6]/30 tracking-widest uppercase">
         <p>© 2026 Solora <span className="text-[#C9A96E]/50 mx-1">—</span> <em className="normal-case tracking-normal text-[#C9A96E]/40 not-italic">Made for the ones still searching for themselves.</em></p>
         <div className="flex gap-6">
-          <Link href="#" className="hover:text-[#C9A96E] transition-colors cursor-none">Privacy</Link>
-          <Link href="#" className="hover:text-[#C9A96E] transition-colors cursor-none">Terms</Link>
+          <Link href="#" className="hover:text-[#C9A96E] transition-colors">Privacy</Link>
+          <Link href="#" className="hover:text-[#C9A96E] transition-colors">Terms</Link>
         </div>
       </div>
     </footer>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
-import { signInWithPassword } from "@/lib/admin-auth";
+import { signInAdmin, signInWithPassword } from "@/lib/admin-auth";
 import { isAllowedAdminEmail } from "@/lib/admin-auth";
 import { useSessionRole } from "@/hooks/use-session-role";
 
@@ -53,12 +53,19 @@ export default function AuthPage() {
     setIsSubmitting(true);
 
     try {
+      if (isAdminPath) {
+        await signInAdmin(email, password);
+        navigate("/admin/dashboard", { replace: true });
+        return;
+      }
+
       const data = await signInWithPassword(email, password);
       if (isAllowedAdminEmail(data.user.email ?? email)) {
         navigate("/admin/dashboard", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
+        return;
       }
+
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to sign in.");
     } finally {

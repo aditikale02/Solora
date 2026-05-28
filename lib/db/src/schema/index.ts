@@ -10,4 +10,5 @@ export * from "./packages";
 export * from "./package-images";
 export * from "./destination-images";
 export * from "./user-saved-destinations";
+export * from "./user-saved-packages";
 export * from "./recently-viewed-destinations";

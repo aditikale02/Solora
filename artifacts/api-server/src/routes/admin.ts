@@ -4,8 +4,11 @@ import { z } from "zod";
 import {
   adminLeadSchema,
   adminUploadTokenSchema,
+  destinationCategoryInputSchema,
+  destinationCategorySchema,
   destinationInputSchema,
   destinationSchema,
+  destinationImageSchema,
   packageImageSchema,
   packageInputSchema,
   packageSchema,
@@ -13,6 +16,8 @@ import {
 } from "@workspace/api-zod";
 import {
   db,
+  destinationCategoriesTable,
+  destinationImagesTable,
   destinationsTable,
   leadsTable,
   packageImagesTable,
@@ -25,6 +30,12 @@ const router: IRouter = Router();
 const imageBucket = "trip-package-images";
 const maxImageBytes = 5 * 1024 * 1024;
 const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+const adminGenericUploadInputSchema = z.object({
+  fileName: z.string().trim().min(1).max(240),
+  contentType: z.string().trim().min(3).max(80),
+  base64: z.string().trim().min(1),
+  folder: z.string().trim().min(1).max(120).default("admin-uploads"),
+});
 const adminUploadInputSchema = z.object({
   packageId: z.string().uuid(),
   fileName: z.string().trim().min(1).max(240),
@@ -44,6 +55,10 @@ function slugify(value: string): string {
     .replace(/-{2,}/g, "-");
 }
 
+function mapCategory(row: typeof destinationCategoriesTable.$inferSelect) {
+  return destinationCategorySchema.parse(row);
+}
+
 function mapDestination(row: typeof destinationsTable.$inferSelect) {
   return destinationSchema.parse({
     id: row.id,
@@ -56,6 +71,7 @@ function mapDestination(row: typeof destinationsTable.$inferSelect) {
     city: row.city,
     shortDescription: row.shortDescription,
     longDescription: row.longDescription,
+    tags: row.tags,
     heroImageUrl: row.heroImageUrl,
     bestSeason: row.bestSeason,
     estimatedBudget: row.estimatedBudget,
@@ -79,6 +95,7 @@ function mapPackage(row: typeof packagesTable.$inferSelect & { destinationName?:
     durationDays: row.durationDays,
     priceAmount: row.priceAmount,
     priceCurrency: row.priceCurrency,
+    features: row.features,
     heroImageUrl: row.heroImageUrl,
     isActive: row.isActive,
     createdAt: row.createdAt,
@@ -154,6 +171,139 @@ router.get("/admin/me", (req: AdminRequest, res) => {
   return res.json({ user: req.adminUser });
 });
 
+router.get("/admin/categories", async (_req, res, next) => {
+  try {
+    const rows = await db
+      .select()
+      .from(destinationCategoriesTable)
+      .orderBy(desc(destinationCategoriesTable.sortOrder), desc(destinationCategoriesTable.createdAt));
+
+    return res.json({ categories: rows.map(mapCategory) });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post("/admin/categories", async (req, res, next) => {
+  try {
+    const parsed = destinationCategoryInputSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Invalid category.", issues: parsed.error.flatten() });
+    }
+
+    const values = parsed.data;
+    const title = values.title;
+    const slug = values.slug ?? slugify(title);
+
+    const [existing] = await db
+      .select({ id: destinationCategoriesTable.id })
+      .from(destinationCategoriesTable)
+      .where(eq(destinationCategoriesTable.slug, slug))
+      .limit(1);
+
+    if (existing) {
+      return res.status(409).json({ message: "A category with this slug already exists." });
+    }
+
+    const [row] = await db
+      .insert(destinationCategoriesTable)
+      .values({
+        title,
+        slug,
+        description: values.description,
+        imageUrl: values.imageUrl,
+        sortOrder: values.sortOrder,
+      })
+      .returning();
+
+    return res.status(201).json({ category: mapCategory(row) });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.put("/admin/categories/:id", async (req, res, next) => {
+  try {
+    const idParsed = z.string().uuid().safeParse(req.params.id);
+    if (!idParsed.success) {
+      return res.status(400).json({ message: "Invalid category id." });
+    }
+
+    const parsed = destinationCategoryInputSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Invalid category.", issues: parsed.error.flatten() });
+    }
+
+    const values = parsed.data;
+    const title = values.title;
+    const slug = values.slug ?? slugify(title);
+
+    const [existing] = await db
+      .select({ id: destinationCategoriesTable.id })
+      .from(destinationCategoriesTable)
+      .where(and(eq(destinationCategoriesTable.slug, slug), ne(destinationCategoriesTable.id, idParsed.data)))
+      .limit(1);
+
+    if (existing) {
+      return res.status(409).json({ message: "A category with this slug already exists." });
+    }
+
+    const [row] = await db
+      .update(destinationCategoriesTable)
+      .set({
+        title,
+        slug,
+        description: values.description,
+        imageUrl: values.imageUrl,
+        sortOrder: values.sortOrder,
+        updatedAt: new Date(),
+      })
+      .where(eq(destinationCategoriesTable.id, idParsed.data))
+      .returning();
+
+    if (!row) {
+      return res.status(404).json({ message: "Category not found." });
+    }
+
+    return res.json({ category: mapCategory(row) });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete("/admin/categories/:id", async (req, res, next) => {
+  try {
+    const idParsed = z.string().uuid().safeParse(req.params.id);
+    if (!idParsed.success) {
+      return res.status(400).json({ message: "Invalid category id." });
+    }
+
+    const linked = await db
+      .select({ id: destinationsTable.id })
+      .from(destinationsTable)
+      .where(eq(destinationsTable.categoryId, idParsed.data))
+      .limit(1);
+
+    if (linked.length > 0) {
+      return res.status(400).json({ message: "Cannot delete category with linked destinations." });
+    }
+
+    const [deleted] = await db
+      .delete(destinationCategoriesTable)
+      .where(eq(destinationCategoriesTable.id, idParsed.data))
+      .returning({ id: destinationCategoriesTable.id });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Category not found." });
+    }
+
+    return res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
+});
+
 router.get("/admin/destinations", async (_req, res, next) => {
   try {
     const rows = await db
@@ -198,6 +348,7 @@ router.post("/admin/destinations", async (req, res, next) => {
         city: values.city,
         shortDescription: values.shortDescription ?? values.description ?? "",
         longDescription: values.longDescription,
+        tags: values.tags,
         heroImageUrl: values.heroImageUrl,
         bestSeason: values.bestSeason,
         estimatedBudget: values.estimatedBudget,
@@ -252,6 +403,7 @@ router.put("/admin/destinations/:id", async (req, res, next) => {
         city: values.city,
         shortDescription: values.shortDescription ?? values.description ?? "",
         longDescription: values.longDescription,
+        tags: values.tags,
         heroImageUrl: values.heroImageUrl,
         bestSeason: values.bestSeason,
         estimatedBudget: values.estimatedBudget,
@@ -322,6 +474,7 @@ router.get("/admin/packages", async (_req, res, next) => {
         durationDays: packagesTable.durationDays,
         priceAmount: packagesTable.priceAmount,
         priceCurrency: packagesTable.priceCurrency,
+        features: packagesTable.features,
         heroImageUrl: packagesTable.heroImageUrl,
         isActive: packagesTable.isActive,
         createdAt: packagesTable.createdAt,
@@ -356,6 +509,7 @@ router.post("/admin/packages", async (req, res, next) => {
         durationDays: values.durationDays,
         priceAmount: values.priceAmount,
         priceCurrency: values.priceCurrency,
+        features: values.features,
         heroImageUrl: values.heroImageUrl,
         isActive: values.isActive,
       })
@@ -433,6 +587,122 @@ router.get("/admin/inquiries", async (_req, res, next) => {
       .limit(50);
 
     return res.json({ inquiries: rows.map((row) => adminLeadSchema.parse(row)) });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post("/admin/destination-images", async (req, res, next) => {
+  try {
+    const parsed = z.object({
+      destinationId: z.string().uuid(),
+      fileName: z.string().trim().min(1).max(240),
+      contentType: z.string().trim().min(3).max(80),
+      base64: z.string().trim().min(1),
+      altText: z.string().trim().max(240).default(""),
+      sortOrder: z.coerce.number().int().default(0),
+      isHero: z.coerce.boolean().default(false),
+    }).safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Invalid upload payload.", issues: parsed.error.flatten() });
+    }
+
+    const { destinationId, fileName, contentType, base64, altText, sortOrder, isHero } = parsed.data;
+
+    if (!allowedImageTypes.has(contentType)) {
+      return res.status(400).json({ message: "Only JPG, PNG, and WebP images are allowed." });
+    }
+
+    const buffer = Buffer.from(base64, "base64");
+
+    if (buffer.byteLength > maxImageBytes) {
+      return res.status(400).json({ message: "Image must be 5MB or smaller." });
+    }
+
+    await ensureImageBucket();
+
+    const safeName = fileName.toLowerCase().replace(/[^a-z0-9_.-]+/g, "-");
+    const storagePath = `${destinationId}/${Date.now()}-${safeName}`;
+    await uploadToStorageWithRetry({
+      storagePath,
+      buffer,
+      contentType,
+    });
+
+    const { data: publicUrlData } = supabaseAdmin.storage.from(imageBucket).getPublicUrl(storagePath);
+
+    const [image] = await db
+      .insert(destinationImagesTable)
+      .values({
+        destinationId,
+        storagePath,
+        publicUrl: publicUrlData.publicUrl,
+        altText,
+        sortOrder,
+        isHero,
+      })
+      .returning();
+
+    if (isHero) {
+      await db
+        .update(destinationsTable)
+        .set({ heroImageUrl: publicUrlData.publicUrl, updatedAt: new Date() })
+        .where(eq(destinationsTable.id, destinationId));
+    }
+
+    return res.status(201).json({
+      upload: adminUploadTokenSchema.parse({
+        bucket: imageBucket,
+        path: storagePath,
+        publicUrl: publicUrlData.publicUrl,
+      }),
+      image: destinationImageSchema.parse(image),
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post("/admin/uploads/generic", async (req, res, next) => {
+  try {
+    const parsed = adminGenericUploadInputSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({ message: "Invalid upload payload.", issues: parsed.error.flatten() });
+    }
+
+    const { fileName, contentType, base64, folder } = parsed.data;
+
+    if (!allowedImageTypes.has(contentType)) {
+      return res.status(400).json({ message: "Only JPG, PNG, and WebP images are allowed." });
+    }
+
+    const buffer = Buffer.from(base64, "base64");
+
+    if (buffer.byteLength > maxImageBytes) {
+      return res.status(400).json({ message: "Image must be 5MB or smaller." });
+    }
+
+    await ensureImageBucket();
+
+    const safeName = fileName.toLowerCase().replace(/[^a-z0-9_.-]+/g, "-");
+    const storagePath = `${folder}/${Date.now()}-${safeName}`;
+    await uploadToStorageWithRetry({
+      storagePath,
+      buffer,
+      contentType,
+    });
+
+    const { data: publicUrlData } = supabaseAdmin.storage.from(imageBucket).getPublicUrl(storagePath);
+
+    return res.status(201).json({
+      upload: adminUploadTokenSchema.parse({
+        bucket: imageBucket,
+        path: storagePath,
+        publicUrl: publicUrlData.publicUrl,
+      }),
+    });
   } catch (error) {
     return next(error);
   }

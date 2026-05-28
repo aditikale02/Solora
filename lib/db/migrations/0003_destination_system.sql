@@ -29,6 +29,7 @@ alter table "destinations"
   add column if not exists "city" varchar(120) not null default '',
   add column if not exists "short_description" text not null default '',
   add column if not exists "long_description" text not null default '',
+  add column if not exists "tags" text not null default '',
   add column if not exists "hero_image_url" text not null default '',
   add column if not exists "best_season" varchar(120) not null default '',
   add column if not exists "estimated_budget" varchar(120) not null default '',
@@ -46,6 +47,9 @@ create index if not exists "destinations_state_idx" on "destinations" ("state");
 create index if not exists "destinations_city_idx" on "destinations" ("city");
 create index if not exists "destinations_is_active_idx" on "destinations" ("is_active");
 create index if not exists "destinations_featured_idx" on "destinations" ("featured");
+
+alter table "packages"
+  add column if not exists "features" text not null default '';
 
 create table if not exists "destination_images" (
   "id" uuid primary key default gen_random_uuid(),

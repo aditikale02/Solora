@@ -11,12 +11,16 @@ import {
 	leadInquiryResponseSchema,
 	newsletterSubscriptionInputSchema,
 	newsletterSubscriptionResponseSchema,
+	destinationCategoryInputSchema,
+	destinationCategorySchema,
 	adminLeadSchema,
+	adminDestinationUploadResponseSchema,
 	adminUploadResponseSchema,
 	sessionRoleSchema,
-	destinationCategorySchema,
 	destinationImageSchema,
 	savedDestinationSchema,
+	savedPackageSchema,
+	savedPackageEntrySchema,
 	recentlyViewedDestinationSchema,
 	destinationInputSchema,
 	destinationSchema,
@@ -26,11 +30,15 @@ import {
 	packageUpdateSchema,
 	serviceSchema,
 	type AdminLeadRecord,
+	type AdminDestinationUploadResponse,
 	type AdminUploadResponse,
-	type SessionRole,
+	type DestinationCategoryInput,
 	type DestinationCategoryRecord,
+	type SessionRole,
 	type DestinationImageRecord,
 	type SavedDestinationRecord,
+	type SavedPackageRecord,
+	type SavedPackageEntryRecord,
 	type RecentlyViewedDestinationRecord,
 	type ContactSubmissionInput,
 	type ContactSubmissionResponse,
@@ -151,6 +159,45 @@ export async function fetchAdminDestinations(): Promise<DestinationRecord[]> {
 	);
 }
 
+export async function fetchAdminCategories(): Promise<DestinationCategoryRecord[]> {
+	const response = await apiFetch<{ categories: DestinationCategoryRecord[] }>("/api/admin/categories", {
+		responseType: "json",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+
+	return response.categories.map((category) => destinationCategorySchema.parse(category));
+}
+
+export async function createAdminCategory(payload: DestinationCategoryInput): Promise<DestinationCategoryRecord> {
+	const body = destinationCategoryInputSchema.parse(payload);
+	const response = await postJson<{ category: DestinationCategoryRecord }>("/api/admin/categories", body);
+
+	return destinationCategorySchema.parse(response.category);
+}
+
+export async function updateAdminCategory(
+	id: string,
+	payload: DestinationCategoryInput,
+): Promise<DestinationCategoryRecord> {
+	const body = destinationCategoryInputSchema.parse(payload);
+	const response = await apiFetch<{ category: DestinationCategoryRecord }>(`/api/admin/categories/${id}`, {
+		method: "PUT",
+		headers: { "content-type": "application/json" },
+		body: JSON.stringify(body),
+		responseType: "json",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+
+	return destinationCategorySchema.parse(response.category);
+}
+
+export async function deleteAdminCategory(id: string): Promise<void> {
+	await apiFetch(`/api/admin/categories/${id}`, {
+		method: "DELETE",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
+}
+
 export async function fetchSessionRole(): Promise<SessionRole> {
 	const response = await apiFetch<SessionRole>("/api/auth/role", {
 		responseType: "json",
@@ -240,6 +287,15 @@ export async function fetchSavedDestinations(): Promise<Array<{ save: SavedDesti
 	}));
 }
 
+export async function fetchSavedPackages(): Promise<Array<SavedPackageEntryRecord>> {
+	const response = await apiFetch<{ savedPackages: SavedPackageEntryRecord[] }>(
+		"/api/user/saved-packages",
+		{ responseType: "json", timeoutMs: REQUEST_TIMEOUT_MS },
+	);
+
+	return response.savedPackages.map((item) => savedPackageEntrySchema.parse(item));
+}
+
 export async function fetchRecentlyViewedDestinations(): Promise<Array<{ view: RecentlyViewedDestinationRecord; destination: DestinationRecord }>> {
 	const response = await apiFetch<{ recentlyViewed: Array<{ view: RecentlyViewedDestinationRecord; destination: DestinationRecord }> }>(
 		"/api/user/recently-viewed",
@@ -254,6 +310,21 @@ export async function fetchRecentlyViewedDestinations(): Promise<Array<{ view: R
 
 export async function recordRecentlyViewed(destinationId: string): Promise<void> {
 	await postJson("/api/user/recently-viewed", { destinationId });
+}
+
+export async function savePackage(packageId: string): Promise<SavedPackageRecord> {
+	const response = await postJson<{ savedPackage: SavedPackageRecord }>("/api/user/saved-packages", {
+		packageId,
+	});
+
+	return savedPackageSchema.parse(response.savedPackage);
+}
+
+export async function unsavePackage(packageId: string): Promise<void> {
+	await apiFetch(`/api/user/saved-packages/${packageId}`, {
+		method: "DELETE",
+		timeoutMs: REQUEST_TIMEOUT_MS,
+	});
 }
 
 export async function createAdminDestination(
@@ -389,4 +460,40 @@ export async function uploadAdminPackageImage(payload: {
 	});
 
 	return adminUploadResponseSchema.parse(response);
+}
+
+export async function uploadAdminGenericImage(payload: {
+	fileName: string;
+	contentType: string;
+	base64: string;
+	folder?: string;
+}): Promise<{ upload: { bucket: string; path: string; publicUrl: string } }> {
+	const response = await postJson<{ upload: { bucket: string; path: string; publicUrl: string } }>(
+		"/api/admin/uploads/generic",
+		{
+			folder: "admin-uploads",
+			...payload,
+		},
+	);
+
+	return response;
+}
+
+export async function uploadAdminDestinationImage(payload: {
+	destinationId: string;
+	fileName: string;
+	contentType: string;
+	base64: string;
+	altText?: string;
+	sortOrder?: number;
+	isHero?: boolean;
+}): Promise<AdminDestinationUploadResponse> {
+	const response = await postJson<AdminDestinationUploadResponse>("/api/admin/destination-images", {
+		altText: "",
+		sortOrder: 0,
+		isHero: true,
+		...payload,
+	});
+
+	return adminDestinationUploadResponseSchema.parse(response);
 }

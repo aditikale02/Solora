@@ -101,6 +101,9 @@ export default function Navbar() {
               </span>
             </button>
           ))}
+          <Link href="/packages" className="text-sm tracking-widest uppercase text-[#F7F0E6]/70 hover:text-[#C9A96E] transition-colors duration-300">
+            Packages
+          </Link>
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
@@ -111,7 +114,14 @@ export default function Navbar() {
                 onClick={() => navigate("/auth")}
                 className="rounded-full border border-[rgba(201,169,110,0.25)] bg-[rgba(247,242,236,0.08)] px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-[#F7F0E6] backdrop-blur-xl transition hover:border-[rgba(201,169,110,0.55)] hover:bg-[rgba(247,242,236,0.12)]"
               >
-                Login / Signup
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate("/signup")}
+                className="rounded-full border border-[rgba(201,169,110,0.25)] bg-[rgba(247,242,236,0.08)] px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-[#F7F0E6] backdrop-blur-xl transition hover:border-[rgba(201,169,110,0.55)] hover:bg-[rgba(247,242,236,0.12)]"
+              >
+                Signup
               </button>
               <PremiumButton variant="secondary" onClick={handleJourneyClick}>
                 Begin Your Journey
@@ -119,8 +129,12 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link href={dashboardHref} className="inline-flex items-center gap-2 rounded-full border border-[rgba(201,169,110,0.25)] bg-[rgba(247,242,236,0.08)] px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-[#F7F0E6] backdrop-blur-xl transition hover:border-[rgba(201,169,110,0.55)] hover:bg-[rgba(247,242,236,0.12)]">
+              <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-full border border-[rgba(201,169,110,0.25)] bg-[rgba(247,242,236,0.08)] px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-[#F7F0E6] backdrop-blur-xl transition hover:border-[rgba(201,169,110,0.55)] hover:bg-[rgba(247,242,236,0.12)]">
                 <CircleUserRound className="size-4" />
+                Profile
+              </Link>
+              <Link href={dashboardHref} className="inline-flex items-center gap-2 rounded-full border border-[rgba(201,169,110,0.25)] bg-[rgba(247,242,236,0.08)] px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-[#F7F0E6] backdrop-blur-xl transition hover:border-[rgba(201,169,110,0.55)] hover:bg-[rgba(247,242,236,0.12)]">
+                <LayoutDashboard className="size-4" />
                 {session.status === "admin" ? "Admin Dashboard" : "Dashboard"}
               </Link>
               <button
@@ -144,7 +158,14 @@ export default function Navbar() {
             onClick={() => navigate("/auth")}
             className="rounded-full border border-[rgba(201,169,110,0.25)] bg-[rgba(247,242,236,0.08)] px-4 py-2 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-[#F7F0E6] backdrop-blur-xl transition hover:border-[rgba(201,169,110,0.55)]"
           >
-            Login / Signup
+            Login
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/signup")}
+            className="rounded-full border border-[rgba(201,169,110,0.25)] bg-[rgba(247,242,236,0.08)] px-4 py-2 text-[0.68rem] font-medium uppercase tracking-[0.18em] text-[#F7F0E6] backdrop-blur-xl transition hover:border-[rgba(201,169,110,0.55)]"
+          >
+            Signup
           </button>
           <button
             type="button"
@@ -161,6 +182,13 @@ export default function Navbar() {
         <div className="mx-auto max-w-7xl px-4 pb-4 sm:px-6 md:hidden">
           <div className="rounded-[24px] border border-[rgba(201,169,110,0.18)] bg-[rgba(15,13,10,0.72)] p-4 text-[#F7F0E6] shadow-2xl backdrop-blur-2xl">
             <div className="grid gap-2">
+              <Link
+                href="/packages"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-left text-sm tracking-wide text-[#F7F0E6]/84"
+              >
+                Packages
+              </Link>
               {navItems.map(({ label, id }) => (
                 <button
                   key={id}
@@ -184,18 +212,38 @@ export default function Navbar() {
                 Begin Your Journey
               </button>
               {!isLoggedIn ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    navigate("/auth");
-                  }}
-                  className="rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-left text-sm tracking-wide text-[#F7F0E6]/84"
-                >
-                  Login / Signup
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate("/auth");
+                    }}
+                    className="rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-left text-sm tracking-wide text-[#F7F0E6]/84"
+                  >
+                    Login
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate("/signup");
+                    }}
+                    className="rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-left text-sm tracking-wide text-[#F7F0E6]/84"
+                  >
+                    Signup
+                  </button>
+                </>
               ) : (
                 <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm tracking-wide text-[#F7F0E6]/84"
+                  >
+                    <CircleUserRound className="size-4" />
+                    Profile
+                  </Link>
                   <Link
                     href={dashboardHref}
                     onClick={() => setMobileMenuOpen(false)}

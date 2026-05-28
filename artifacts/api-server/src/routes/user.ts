@@ -2,14 +2,18 @@ import { Router, type IRouter } from "express";
 import { and, desc, eq } from "drizzle-orm";
 import {
   recentlyViewedDestinationSchema,
+  savedPackageSchema,
   savedDestinationSchema,
   destinationSchema,
+  packageSchema,
 } from "@workspace/api-zod";
 import {
   db,
   destinationsTable,
+  packagesTable,
   recentlyViewedDestinationsTable,
   userSavedDestinationsTable,
+  userSavedPackagesTable,
 } from "@workspace/db";
 import { requireUser, type UserRequest } from "../middleware/user-auth";
 
@@ -25,6 +29,7 @@ function mapDestination(row: typeof destinationsTable.$inferSelect & { categoryT
     city: row.city,
     shortDescription: row.shortDescription,
     longDescription: row.longDescription,
+    tags: row.tags,
     heroImageUrl: row.heroImageUrl,
     bestSeason: row.bestSeason,
     estimatedBudget: row.estimatedBudget,
@@ -37,7 +42,120 @@ function mapDestination(row: typeof destinationsTable.$inferSelect & { categoryT
   });
 }
 
+function mapPackage(row: typeof packagesTable.$inferSelect & { destinationName?: string | null }) {
+  return packageSchema.parse({
+    id: row.id,
+    destinationId: row.destinationId,
+    destinationName: row.destinationName ?? undefined,
+    title: row.title,
+    slug: row.slug,
+    description: row.description,
+    durationDays: row.durationDays,
+    priceAmount: row.priceAmount,
+    priceCurrency: row.priceCurrency,
+    features: row.features,
+    heroImageUrl: row.heroImageUrl,
+    isActive: row.isActive,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  });
+}
+
 router.use(requireUser);
+
+router.get("/user/saved-packages", async (req: UserRequest, res, next) => {
+  try {
+    const rows = await db
+      .select({
+        id: userSavedPackagesTable.id,
+        userId: userSavedPackagesTable.userId,
+        packageId: userSavedPackagesTable.packageId,
+        createdAt: userSavedPackagesTable.createdAt,
+        package: packagesTable,
+        destinationName: destinationsTable.title,
+      })
+      .from(userSavedPackagesTable)
+      .leftJoin(packagesTable, eq(userSavedPackagesTable.packageId, packagesTable.id))
+      .leftJoin(destinationsTable, eq(packagesTable.destinationId, destinationsTable.id))
+      .where(eq(userSavedPackagesTable.userId, req.sessionUser!.id))
+      .orderBy(desc(userSavedPackagesTable.createdAt));
+
+    return res.json({
+      savedPackages: rows
+        .filter((row) => row.package)
+        .map((row) => ({
+          save: savedPackageSchema.parse({
+            id: row.id,
+            userId: row.userId,
+            packageId: row.packageId,
+            createdAt: row.createdAt,
+          }),
+          package: mapPackage({ ...row.package!, destinationName: row.destinationName ?? undefined }),
+        })),
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.post("/user/saved-packages", async (req: UserRequest, res, next) => {
+  try {
+    const packageId = String(req.body?.packageId ?? "").trim();
+
+    if (!packageId) {
+      return res.status(400).json({ message: "packageId is required." });
+    }
+
+    const [travelPackage] = await db
+      .select()
+      .from(packagesTable)
+      .where(eq(packagesTable.id, packageId))
+      .limit(1);
+
+    if (!travelPackage || !travelPackage.isActive) {
+      return res.status(404).json({ message: "Package not found." });
+    }
+
+    const [row] = await db
+      .insert(userSavedPackagesTable)
+      .values({ userId: req.sessionUser!.id, packageId })
+      .onConflictDoUpdate({
+        target: [userSavedPackagesTable.userId, userSavedPackagesTable.packageId],
+        set: { createdAt: new Date() },
+      })
+      .returning();
+
+    return res.status(201).json({
+      savedPackage: savedPackageSchema.parse(row),
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+router.delete("/user/saved-packages/:packageId", async (req: UserRequest, res, next) => {
+  try {
+    const packageId = String(req.params.packageId ?? "").trim();
+
+    const [deleted] = await db
+      .delete(userSavedPackagesTable)
+      .where(
+        and(
+          eq(userSavedPackagesTable.userId, req.sessionUser!.id),
+          eq(userSavedPackagesTable.packageId, packageId),
+        ),
+      )
+      .returning({ id: userSavedPackagesTable.id });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Saved package not found." });
+    }
+
+    return res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
+});
 
 router.get("/user/saved-destinations", async (req: UserRequest, res, next) => {
   try {

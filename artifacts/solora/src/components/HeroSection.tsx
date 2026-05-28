@@ -240,21 +240,16 @@ export default function HeroSection() {
         </div>
 
         {/* Tagline — positioned 10vh down from center */}
-        <div className="relative z-10 text-center px-6 mt-[10vh]">
-          <h1 className="font-serif text-[6vw] md:text-[5vw] leading-[1.1] font-light tracking-[0.02em] text-[#1A1714] [text-shadow:0_2px_40px_rgba(247,240,230,0.6)]">
+        <div className="relative z-10 text-center px-6 mt-[10vh] max-w-5xl mx-auto">
+          <h1 className="font-serif text-[5.5vw] md:text-[4.5vw] leading-[1.15] font-light tracking-[0.01em] text-[#1A1714] [text-shadow:0_2px_40px_rgba(247,240,230,0.6)]">
             <span className="block overflow-hidden">
               <motion.span className="block" initial={{ y: 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
-                SOME JOURNEYS BEGIN
+                Some journeys begin
               </motion.span>
             </span>
-            <span className="block overflow-hidden text-[#8B6340] italic ml-[10vw]">
+            <span className="block overflow-hidden text-[#8B6340] italic">
               <motion.span className="block" initial={{ y: 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}>
-                WHEN YOU FINALLY
-              </motion.span>
-            </span>
-            <span className="block overflow-hidden">
-              <motion.span className="block" initial={{ y: 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}>
-                CHOOSE YOURSELF.
+                when you finally choose yourself
               </motion.span>
             </span>
           </h1>
@@ -262,20 +257,20 @@ export default function HeroSection() {
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="mt-8 font-sans text-sm md:text-base text-[#1A1714]/65 max-w-md mx-auto"
+            transition={{ duration: 1, delay: 0.8 }}
+            className="mt-10 font-sans text-base md:text-lg text-[#1A1714]/70 max-w-xl mx-auto leading-relaxed"
           >
-            Solo travel experiences curated for self-discovery, healing, and transformation.
+            Curated solo travel experiences for self-discovery and transformation
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.2 }}
+            transition={{ duration: 1, delay: 1 }}
             className="mt-12 flex justify-center"
           >
             <PremiumButton variant="primary" onClick={handleJourneyClick}>
-              Begin My Journey
+              Begin Your Journey
             </PremiumButton>
           </motion.div>
         </div>

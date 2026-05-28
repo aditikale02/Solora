@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ImageUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { uploadAdminPackageImage } from "@workspace/api-client-react";
-import type { AdminUploadResponse } from "@workspace/api-zod";
+import { Spinner } from "@/components/ui/spinner";
+import { uploadAdminDestinationImage, uploadAdminGenericImage, uploadAdminPackageImage } from "@workspace/api-client-react";
 
 const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 const maxBytes = 5 * 1024 * 1024;
@@ -20,19 +20,39 @@ function toBase64(file: File): Promise<string> {
   });
 }
 
+type UploadTarget =
+  | { targetType: "package"; targetId: string }
+  | { targetType: "destination"; targetId: string }
+  | { targetType: "generic"; targetId?: string };
+
 export function ImageUploadField({
-  packageId,
+  targetType,
+  targetId,
+  title = "Upload image",
+  isHero = true,
+  sortOrder = 0,
   onUploaded,
-}: {
-  packageId: string;
-  onUploaded: (upload: AdminUploadResponse) => void;
+}: UploadTarget & {
+  title?: string;
+  isHero?: boolean;
+  sortOrder?: number;
+  onUploaded: (publicUrl: string) => void;
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   async function handleUpload() {
     if (!file) return;
@@ -54,16 +74,35 @@ export function ImageUploadField({
     try {
       const base64 = await toBase64(file);
       setProgress(55);
-      const response = await uploadAdminPackageImage({
-        packageId,
-        fileName: file.name,
-        contentType: file.type,
-        base64,
-        altText: file.name.replace(/\.[^.]+$/, ""),
-        isHero: true,
-      });
+      const response =
+        targetType === "package"
+          ? await uploadAdminPackageImage({
+              packageId: targetId,
+              fileName: file.name,
+              contentType: file.type,
+              base64,
+              altText: file.name.replace(/\.[^.]+$/, ""),
+              isHero,
+              sortOrder,
+            })
+          : targetType === "destination"
+            ? await uploadAdminDestinationImage({
+                destinationId: targetId,
+                fileName: file.name,
+                contentType: file.type,
+                base64,
+                altText: file.name.replace(/\.[^.]+$/, ""),
+                isHero,
+                sortOrder,
+              })
+            : await uploadAdminGenericImage({
+                fileName: file.name,
+                contentType: file.type,
+                base64,
+                folder: targetId ?? "admin-uploads",
+              });
       setProgress(100);
-      onUploaded(response);
+      onUploaded(response.upload.publicUrl);
       setFile(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
@@ -73,23 +112,44 @@ export function ImageUploadField({
   }
 
   return (
-    <div className="grid gap-3 rounded-md border border-[#D7C6A5] bg-white/70 p-4">
+    <div
+      className={`grid gap-3 rounded-md border p-4 transition ${
+        isDragging ? "border-[#8B6340] bg-[#FBF6EE]" : "border-[#D7C6A5] bg-white/70"
+      }`}
+      onDragEnter={() => setIsDragging(true)}
+      onDragLeave={() => setIsDragging(false)}
+      onDragOver={(event) => {
+        event.preventDefault();
+        setIsDragging(true);
+      }}
+      onDrop={(event) => {
+        event.preventDefault();
+        setIsDragging(false);
+        setFile(event.dataTransfer.files?.[0] ?? null);
+      }}
+    >
       <div className="flex items-center gap-2 text-sm font-medium text-[#1A1714]">
         <ImageUp className="size-4" />
-        Package image
+        {title}
+      </div>
+      <div className="rounded-md border border-dashed border-[#D7C6A5] bg-white px-4 py-6 text-sm text-[#6A5A47]">
+        Drag and drop an image here, or choose a file below.
       </div>
       <Input
         type="file"
         accept="image/jpeg,image/png,image/webp"
-        onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-        className="bg-white"
+        onChange={(event) => {
+          setError(null);
+          setFile(event.target.files?.[0] ?? null);
+          setProgress(0);
+        }}
+        className="bg-white caret-[#1A1714]"
       />
       {previewUrl ? (
         <img
           src={previewUrl}
           alt=""
           className="h-36 w-full rounded-md object-cover"
-          onLoad={() => URL.revokeObjectURL(previewUrl)}
         />
       ) : null}
       {isUploading ? (
@@ -100,10 +160,11 @@ export function ImageUploadField({
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
       <Button
         type="button"
-        disabled={!file || !packageId || isUploading}
+        disabled={!file || isUploading || (targetType !== "generic" && !targetId)}
         onClick={handleUpload}
         className="bg-[#1A1714] text-[#F7F0E6] hover:bg-[#2B2520]"
       >
+        {isUploading ? <Spinner className="mr-2 size-4" /> : null}
         {isUploading ? "Uploading..." : "Upload image"}
       </Button>
     </div>

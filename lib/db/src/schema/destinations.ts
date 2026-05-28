@@ -15,6 +15,7 @@ export const destinationsTable = pgTable(
     city: varchar("city", { length: 120 }).notNull().default(""),
     shortDescription: text("short_description").notNull().default(""),
     longDescription: text("long_description").notNull().default(""),
+    tags: text("tags").notNull().default(""),
     heroImageUrl: text("hero_image_url").notNull().default(""),
     bestSeason: varchar("best_season", { length: 120 }).notNull().default(""),
     estimatedBudget: varchar("estimated_budget", { length: 120 }).notNull().default(""),

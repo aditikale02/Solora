@@ -24,6 +24,7 @@ export const packagesTable = pgTable(
     durationDays: integer("duration_days").notNull(),
     priceAmount: integer("price_amount").notNull(),
     priceCurrency: varchar("price_currency", { length: 8 }).notNull().default("INR"),
+    features: text("features").notNull().default(""),
     heroImageUrl: text("hero_image_url").notNull().default(""),
     isActive: boolean("is_active").notNull().default(true),
     createdAt: createdAtColumn,

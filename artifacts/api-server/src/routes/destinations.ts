@@ -24,6 +24,7 @@ function mapDestination(row: typeof destinationsTable.$inferSelect) {
     city: row.city,
     shortDescription: row.shortDescription,
     longDescription: row.longDescription,
+    tags: row.tags,
     heroImageUrl: row.heroImageUrl,
     bestSeason: row.bestSeason,
     estimatedBudget: row.estimatedBudget,

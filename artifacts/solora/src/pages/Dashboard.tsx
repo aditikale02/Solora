@@ -3,7 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Bookmark, Clock3, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { fetchDestinationCategories, fetchRecentlyViewedDestinations, fetchSavedDestinations } from "@workspace/api-client-react";
+import { fetchDestinationCategories, fetchRecentlyViewedDestinations, fetchSavedDestinations, fetchSavedPackages } from "@workspace/api-client-react";
 import { useSessionRole } from "@/hooks/use-session-role";
 import { setPageSeo } from "@/lib/seo";
 
@@ -44,6 +44,7 @@ export default function Dashboard() {
   }, [navigate, session.status]);
 
   const savedQuery = useQuery({ queryKey: ["user", "saved-destinations"], queryFn: fetchSavedDestinations, enabled: session.status === "user" });
+  const savedPackagesQuery = useQuery({ queryKey: ["user", "saved-packages"], queryFn: fetchSavedPackages, enabled: session.status === "user" });
   const recentQuery = useQuery({ queryKey: ["user", "recently-viewed"], queryFn: fetchRecentlyViewedDestinations, enabled: session.status === "user" });
   const categoriesQuery = useQuery({ queryKey: ["public", "categories"], queryFn: fetchDestinationCategories });
 
@@ -78,6 +79,10 @@ export default function Dashboard() {
               <div className="rounded-2xl border border-white/10 bg-black/15 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-[#F7F0E6]/52">Saved trips</p>
                 <p className="mt-2 text-2xl font-semibold">{savedQuery.data?.length ?? 0}</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/15 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-[#F7F0E6]/52">Saved packages</p>
+                <p className="mt-2 text-2xl font-semibold">{savedPackagesQuery.data?.length ?? 0}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-black/15 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-[#F7F0E6]/52">Categories</p>
@@ -115,6 +120,34 @@ export default function Dashboard() {
                   No saved trips yet. Start browsing destinations and tap the heart when something fits.
                 </div>
               ) : null}
+            </div>
+
+            <div className="mt-8 border-t border-[#E3D6C1] pt-6">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.25em] text-[#8B6340]">Saved Packages</p>
+                  <h3 className="mt-2 font-serif text-2xl">Your shortlist</h3>
+                </div>
+                <Link href="/packages" className="inline-flex items-center gap-2 text-sm text-[#8B6340]">
+                  Browse packages <ArrowRight className="size-4" />
+                </Link>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {(savedPackagesQuery.data ?? []).map((entry) => (
+                  <Link key={entry.package.id} href={`/packages/${entry.package.slug}`} className="group overflow-hidden rounded-2xl border border-[#E3D6C1] bg-[#FFFDF9] transition hover:-translate-y-1 hover:shadow-lg">
+                    <img src={entry.package.heroImageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80"} alt={entry.package.title} className="h-36 w-full object-cover" />
+                    <div className="p-4">
+                      <p className="text-sm font-medium text-[#1A1714]">{entry.package.title}</p>
+                      <p className="mt-1 text-xs text-[#6A5A47]">{entry.package.destinationName ?? "Destination"} · {entry.package.durationDays} days</p>
+                    </div>
+                  </Link>
+                ))}
+                {(savedPackagesQuery.data?.length ?? 0) === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-[#D7C6A5] bg-[#FBF7F1] p-6 text-sm text-[#5A4C3A]">
+                    No saved packages yet. Browse packages and tap save to build your shortlist.
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
 
