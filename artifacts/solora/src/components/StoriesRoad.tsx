@@ -73,11 +73,48 @@ export default function StoriesRoad() {
   const supporting = stories.slice(1);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative py-28 px-6 md:px-12 overflow-hidden"
-      style={{ background: "#0c0a08" }}
-    >
+    <>
+      {/* Wave Brush Divider - Premium transition from light to dark */}
+      <div className="relative w-full overflow-hidden" style={{ background: "#FDFBF7" }}>
+        <svg
+          className="w-full"
+          style={{ height: "120px", display: "block" }}
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <linearGradient id="waveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FDFBF7" stopOpacity="1" />
+              <stop offset="40%" stopColor="#F5EFE3" stopOpacity="1" />
+              <stop offset="100%" stopColor="#0c0a08" stopOpacity="1" />
+            </linearGradient>
+          </defs>
+          {/* Organic wave brush stroke */}
+          <path
+            d="M0,40 C120,25 240,55 360,45 C480,35 600,60 720,50 C840,40 960,65 1080,55 C1200,45 1320,70 1440,60 L1440,120 L0,120 Z"
+            fill="url(#waveGradient)"
+            opacity="0.95"
+          />
+          {/* Secondary softer wave for depth */}
+          <path
+            d="M0,60 C150,50 300,75 450,65 C600,55 750,80 900,70 C1050,60 1200,85 1350,75 C1380,73 1410,71 1440,70 L1440,120 L0,120 Z"
+            fill="#0c0a08"
+            opacity="0.7"
+          />
+          {/* Base layer */}
+          <path
+            d="M0,85 C180,75 360,95 540,85 C720,75 900,95 1080,85 C1260,75 1350,90 1440,85 L1440,120 L0,120 Z"
+            fill="#0c0a08"
+          />
+        </svg>
+      </div>
+
+      <section
+        ref={sectionRef}
+        className="relative px-6 md:px-12 overflow-hidden"
+        style={{ background: "#0c0a08", paddingTop: "6rem", paddingBottom: "7rem" }}
+      >
       {/* Background atmosphere — faint map grid */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.025]"
@@ -89,15 +126,15 @@ export default function StoriesRoad() {
         style={{ background: "radial-gradient(ellipse,rgba(201,169,110,0.06) 0%,transparent 70%)", filter: "blur(40px)" }}
       />
 
-      {/* Section header */}
+      {/* Section header - improved spacing */}
       <motion.div
-        className="mb-16 relative z-10"
+        className="mb-20 relative z-10"
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       >
         <h2 className="font-serif text-4xl md:text-5xl text-[#F7F0E6] font-light">Stories From The Road</h2>
-        <div className="mt-3 w-16 h-px bg-[#C9A96E]/40" />
+        <div className="mt-4 w-20 h-px bg-gradient-to-r from-[#C9A96E] to-transparent" />
       </motion.div>
 
       {/* Organic layout */}
@@ -118,7 +155,7 @@ export default function StoriesRoad() {
           <div className="absolute bottom-0 left-0 right-0 p-8">
             <h3 className="font-serif text-3xl md:text-4xl text-[#F7F0E6] font-light leading-tight mb-4">{featured.title}</h3>
             <p className="font-serif text-lg text-[#F7F0E6]/60 italic mb-8">"{featured.quote}"</p>
-            <a href="#" className="font-sans text-xs tracking-widest text-[#C9A96E] flex items-center gap-2 group-hover:gap-4 transition-all duration-300 cursor-none">
+            <a href="/packages" className="font-sans text-xs tracking-widest text-[#C9A96E] flex items-center gap-2 group-hover:gap-4 transition-all duration-300 cursor-none">
               Read Story <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </a>
           </div>
@@ -189,9 +226,10 @@ export default function StoriesRoad() {
         </svg>
       </motion.div>
 
-      {/* Top/bottom blend */}
-      <div className="absolute top-0 left-0 right-0 h-16 pointer-events-none" style={{ background: "linear-gradient(to bottom,#0A0806,transparent)" }} />
-      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: "linear-gradient(to bottom,transparent,#0c0a08)" }} />
+      {/* Top blend removed - wave divider handles transition */}
+      {/* Bottom blend - softer transition to CommunityTrust */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none" style={{ background: "linear-gradient(to bottom,transparent,rgba(12,10,8,0.6))" }} />
     </section>
+    </>
   );
 }

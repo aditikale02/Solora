@@ -13,8 +13,8 @@ export default function CustomCursor() {
     let ringX = 0, ringY = 0;
     let rafId = 0;
 
-    const LENS_LERP = 0.12;
-    const RING_LERP = 0.07;
+    const LENS_LERP = 0.25;  // Increased from 0.12 for faster movement
+    const RING_LERP = 0.18;  // Increased from 0.07 for faster movement
     const MAGNIFY_RADIUS = 120;
     const MAGNIFY_SCALE = 1.35;
 
@@ -46,10 +46,10 @@ export default function CustomCursor() {
       }
     };
 
-    // ── text magnification ──
+    // ── text magnification (only for slogans/quotes) ──
     const getTextTargets = (): HTMLElement[] =>
       Array.from(document.querySelectorAll<HTMLElement>(
-        "h1, h2, h3, h4, p, em, .peaceful-quote, .stat-number, .memory-caption"
+        ".peaceful-quote, em, blockquote, [class*='slogan'], [class*='tagline'], [class*='quote']"
       )).filter(el => !el.closest("nav") && !el.closest("[data-fixed]"));
 
     let textTargets: HTMLElement[] = [];

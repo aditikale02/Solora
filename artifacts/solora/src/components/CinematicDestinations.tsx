@@ -40,7 +40,7 @@ function DestPanel({ dest, index }: { dest: (typeof destinations)[number]; index
 
   if (dest.layout === "full-bleed") {
     return (
-      <motion.div ref={ref} className="relative w-full overflow-hidden group" style={{ height: "80vh" }}
+      <motion.div ref={ref} className="relative w-full overflow-hidden group border-0" style={{ height: "80vh" }}
         initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 1 }}>
         <div className="absolute inset-0" style={{ backgroundImage: imgBg, backgroundSize: "cover", backgroundPosition: "center", animation: "kenBurns 20s ease-in-out infinite alternate" }} />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(15,13,10,0.25) 0%,rgba(15,13,10,0.65) 100%)" }} />
@@ -55,7 +55,7 @@ function DestPanel({ dest, index }: { dest: (typeof destinations)[number]; index
             transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}>
             "{dest.line}"
           </motion.p>
-          <a href="#" className="font-sans text-sm tracking-widest text-[#C9A96E] group/link flex items-center gap-2 hover:gap-4 transition-all duration-300 cursor-none">
+          <a href="/packages" className="font-sans text-sm tracking-widest text-[#C9A96E] group/link flex items-center gap-2 hover:gap-4 transition-all duration-300 cursor-none">
             Explore <span className="transition-transform duration-300 group-hover/link:translate-x-1">→</span>
           </a>
         </div>
@@ -66,13 +66,13 @@ function DestPanel({ dest, index }: { dest: (typeof destinations)[number]; index
   const isLeft = dest.layout === "image-left";
 
   return (
-    <motion.div ref={ref} className="flex flex-col md:flex-row w-full overflow-hidden group" style={{ minHeight: "60vh" }}
+    <motion.div ref={ref} className="flex flex-col md:flex-row w-full overflow-hidden group border-0" style={{ minHeight: "60vh" }}
       initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 1, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}>
 
       {/* Image */}
-      <div className={`relative overflow-hidden ${isLeft ? "md:order-1" : "md:order-2"}`} style={{ flex: "0 0 58%", minHeight: "45vh" }}>
+      <div className={`relative overflow-hidden border-0 ${isLeft ? "md:order-1" : "md:order-2"}`} style={{ flex: "0 0 58%", minHeight: "45vh" }}>
         <div
           className="absolute inset-0 group-hover:scale-[1.02] group-hover:brightness-[1.04] transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{ backgroundImage: imgBg, backgroundSize: "cover", backgroundPosition: "center", animation: "kenBurns 22s ease-in-out infinite alternate" }}
@@ -89,7 +89,7 @@ function DestPanel({ dest, index }: { dest: (typeof destinations)[number]; index
 
       {/* Content — light background */}
       <div
-        className={`flex flex-col justify-center px-10 md:px-14 py-14 ${isLeft ? "md:order-2" : "md:order-1"}`}
+        className={`flex flex-col justify-center px-10 md:px-14 py-14 border-0 ${isLeft ? "md:order-2" : "md:order-1"}`}
         style={{ flex: "0 0 42%", background: "#F5F0E8" }}
       >
         <p className="font-sans text-[10px] tracking-[0.35em] uppercase text-[#C9A96E] mb-5">{dest.category}</p>
@@ -100,7 +100,7 @@ function DestPanel({ dest, index }: { dest: (typeof destinations)[number]; index
           transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}>
           "{dest.line}"
         </motion.p>
-        <a href="#" className="font-sans text-xs tracking-widest text-[#C9A96E] group/link flex items-center gap-2 hover:gap-4 transition-all duration-300 cursor-none w-fit">
+        <a href="/packages" className="font-sans text-xs tracking-widest text-[#C9A96E] group/link flex items-center gap-2 hover:gap-4 transition-all duration-300 cursor-none w-fit">
           Explore <span className="transition-transform duration-300 group-hover/link:translate-x-1">→</span>
         </a>
       </div>
@@ -125,7 +125,7 @@ export default function CinematicDestinations() {
         </motion.h2>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col -space-y-px">
         {destinations.map((dest, i) => (
           <DestPanel key={dest.name} dest={dest} index={i} />
         ))}

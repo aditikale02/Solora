@@ -142,8 +142,7 @@ export default function MemoryScroller() {
         <div className="absolute inset-y-0 right-0 w-[10%] pointer-events-none z-10" style={{ background: "linear-gradient(to left,#FDFBF7,transparent)" }} />
       </div>
 
-      {/* Bottom blend — into dark StoriesRoad */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: "linear-gradient(to bottom,transparent,#0c0a08)" }} />
+      {/* Bottom blend removed - wave divider in StoriesRoad handles transition */}
     </section>
   );
 }

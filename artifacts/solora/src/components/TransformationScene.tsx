@@ -41,8 +41,8 @@ export default function TransformationScene() {
         }}
       />
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(15,13,10,0.28) 0%,rgba(15,13,10,0.04) 35%,rgba(15,13,10,0.38) 80%,rgba(15,13,10,0.8) 100%)" }} />
+      {/* Gradient overlays - softer warm transition from beige */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(247,242,236,1) 0%,rgba(247,242,236,0.85) 8%,rgba(201,169,110,0.15) 18%,rgba(15,13,10,0.04) 35%,rgba(15,13,10,0.38) 80%,rgba(15,13,10,0.8) 100%)" }} />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 28%,rgba(201,169,110,0.07) 0%,transparent 55%)" }} />
 
       {/* Rising mist particles from cliff */}
@@ -151,6 +151,21 @@ export default function TransformationScene() {
           <PremiumButton variant="primary" onClick={handleJourneyClick}>Begin Your Journey</PremiumButton>
         </motion.div>
       </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, y: [0, 8, 0] }}
+        transition={{ 
+          opacity: { duration: 1, delay: 1.5 },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+        }}
+      >
+        <div className="w-6 h-10 rounded-full border-2 border-[#F7F0E6]/40 flex items-start justify-center p-2">
+          <div className="w-1 h-2 rounded-full bg-[#F7F0E6]/60" />
+        </div>
+      </motion.div>
 
       {/* Bottom blend into footer */}
       <div className="absolute bottom-0 left-0 right-0 h-36 pointer-events-none" style={{ background: "linear-gradient(to bottom,transparent,#0F0D0A)" }} />

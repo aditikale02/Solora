@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import GoldenMarquee from "./GoldenMarquee";
 
 const travelers = [
   { name: "Priya",  city: "Mumbai" },
@@ -143,8 +144,13 @@ export default function CommunityTrust() {
         ))}
       </div>
 
-      {/* Bottom blend — into dark TransformationScene */}
-      <div className="absolute bottom-0 left-0 right-0 h-28 pointer-events-none" style={{ background: "linear-gradient(to bottom,transparent,#0F0D0A)" }} />
+      {/* Bottom blend — smooth transition to TransformationScene */}
+      <div className="absolute bottom-12 left-0 right-0 h-32 pointer-events-none" style={{ background: "linear-gradient(to bottom,transparent,rgba(247,242,236,0.5))" }} />
+      
+      {/* Golden Marquee Strip */}
+      <div className="absolute bottom-0 left-0 right-0 z-20">
+        <GoldenMarquee />
+      </div>
     </section>
   );
 }
