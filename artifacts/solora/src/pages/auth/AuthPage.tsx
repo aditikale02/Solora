@@ -21,7 +21,7 @@ function AuthBackdrop() {
 }
 
 const glassInputClassName =
-  "border-white/10 bg-black/20 text-[#F7F0E6] caret-[#F7F0E6] placeholder:text-[#F7F0E6]/55 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus-visible:border-[#C9A96E]/70 focus-visible:ring-2 focus-visible:ring-[#C9A96E]/35 focus-visible:ring-offset-0 selection:bg-[#C9A96E]/30 selection:text-[#F7F0E6]";
+  "h-11 border-white/20 bg-white/10 text-[#F7F0E6] caret-[#C9A96E] placeholder:text-[#F7F0E6]/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] focus-visible:border-[#C9A96E]/80 focus-visible:ring-2 focus-visible:ring-[#C9A96E]/40 focus-visible:ring-offset-0 focus-visible:bg-white/15 selection:bg-[#C9A96E]/30 selection:text-[#F7F0E6] transition-all duration-200";
 
 export default function AuthPage() {
   const [, navigate] = useLocation();
@@ -167,15 +167,12 @@ export default function AuthPage() {
               </button>
             </div>
 
-            <div className="mt-6 grid gap-3">
-              <Button type="button" variant="outline" className="h-11 border-white/12 bg-white/5 text-[#F7F0E6] hover:bg-white/10">
-                Continue with Google
-              </Button>
+            <div className="mt-6">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={() => navigate("/", { replace: false })}
-                className="h-11 justify-between border border-white/8 bg-transparent text-[#F7F0E6]/75 hover:bg-white/5 hover:text-[#F7F0E6]"
+                className="h-11 w-full justify-between border border-white/8 bg-transparent text-[#F7F0E6]/75 hover:bg-white/5 hover:text-[#F7F0E6]"
               >
                 <span>Continue exploring without login</span>
                 <ChevronRight className="size-4" />
