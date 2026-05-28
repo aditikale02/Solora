@@ -37,6 +37,7 @@ export default function AuthPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const lastSubmitAtRef = useMemo(() => ({ time: 0 }), [] as any);
 
   useEffect(() => {
     if (sessionRole.status === "admin") {
@@ -50,26 +51,47 @@ export default function AuthPage() {
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    console.log('🔐 Login attempt started', { email, isAdminPath });
+    if (isSubmitting) return;
+    // Prevent rapid resubmits (debounce)
+    const now = Date.now();
+    if (now - lastSubmitAtRef.time < 3000) return;
+    lastSubmitAtRef.time = now;
     setIsSubmitting(true);
 
     try {
       if (isAdminPath) {
+        console.log('🔑 Admin login path');
         await signInAdmin(email, password);
+        console.log('✅ Admin login successful');
         navigate("/admin/dashboard", { replace: true });
         return;
       }
 
+      console.log('🔑 User login path');
       const data = await signInWithPassword(email, password);
+      console.log('✅ Login successful', { email: data.user.email });
+      
       if (isAllowedAdminEmail(data.user.email ?? email)) {
+        console.log('👑 User is admin, redirecting to admin dashboard');
         navigate("/admin/dashboard", { replace: true });
         return;
       }
 
+      console.log('👤 Regular user, redirecting to user dashboard');
       navigate("/dashboard", { replace: true });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to sign in.");
+      console.error('❌ Login error:', error);
+      if (error && typeof error === 'object' && 'status' in error && (error as any).status === 429) {
+        toast.error('Too many requests. Please wait a moment and try again.');
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        toast.error((error as any).message);
+      } else {
+        toast.error('Unable to sign in.');
+      }
     } finally {
       setIsSubmitting(false);
+      console.log('🔐 Login attempt finished');
     }
   }
 
@@ -80,6 +102,10 @@ export default function AuthPage() {
       return;
     }
 
+    if (isSubmitting) return;
+    const now = Date.now();
+    if (now - lastSubmitAtRef.time < 3000) return;
+    lastSubmitAtRef.time = now;
     setIsSubmitting(true);
 
     try {
@@ -92,6 +118,10 @@ export default function AuthPage() {
       });
 
       if (error) {
+        // Surface specific known errors
+        if ((error as any).status === 429) {
+          throw new Error('Too many requests. Please wait and try again.');
+        }
         throw error;
       }
 
@@ -107,7 +137,14 @@ export default function AuthPage() {
       toast.success("Account created. Check your email to confirm your account.");
       setTab("login");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to sign up.");
+      console.error('❌ Signup error:', error);
+      if (error && typeof error === 'object' && 'message' in error) {
+        toast.error((error as any).message);
+      } else if (error && typeof error === 'string') {
+        toast.error(error as string);
+      } else {
+        toast.error('Unable to sign up.');
+      }
     } finally {
       setIsSubmitting(false);
     }

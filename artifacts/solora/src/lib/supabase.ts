@@ -12,6 +12,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required.");
 }
 
+// Warn when falling back to embedded demo credentials so deploys surface configuration issues
+if (supabaseUrl === FALLBACK_SUPABASE_URL || supabaseAnonKey === FALLBACK_SUPABASE_ANON_KEY) {
+  // eslint-disable-next-line no-console
+  console.warn('[supabase] Using fallback demo credentials. Ensure VITE_SUPABASE_* env vars are set in your environment.');
+}
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
