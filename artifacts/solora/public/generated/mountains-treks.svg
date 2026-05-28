@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Mountains & Treks</title>
+  <desc id="desc">A cinematic mountain illustration for the Mountains & Treks category.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1b2a3a"/>
+      <stop offset="55%" stop-color="#3b5b73"/>
+      <stop offset="100%" stop-color="#d8b37c"/>
+    </linearGradient>
+    <linearGradient id="ridge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6f1e8" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#b99b73" stop-opacity="0.92"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1240" cy="175" r="160" fill="#f7ecd4" fill-opacity="0.25"/>
+  <path d="M0 640L180 520L320 620L520 430L760 660L1010 400L1260 610L1420 540L1600 620V900H0Z" fill="#152331" fill-opacity="0.78"/>
+  <path d="M0 700L260 530L420 640L640 470L820 620L1040 430L1240 560L1440 500L1600 560V900H0Z" fill="#20384d" fill-opacity="0.78"/>
+  <path d="M0 760L220 640L420 710L620 580L820 740L1020 600L1240 700L1420 650L1600 720V900H0Z" fill="url(#ridge)"/>
+  <rect x="96" y="96" width="620" height="220" rx="34" fill="#fff7ee" fill-opacity="0.78"/>
+  <text x="130" y="182" font-family="Georgia, serif" font-size="72" fill="#1a1714">Mountains</text>
+  <text x="130" y="245" font-family="Arial, sans-serif" font-size="30" fill="#5a4c3a">Treks, ridgelines, and cool-air escapes</text>
+</svg>

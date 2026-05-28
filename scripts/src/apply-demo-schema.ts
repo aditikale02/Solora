@@ -53,18 +53,6 @@ async function main() {
     `);
 
     await client.query(`
-      update "destinations"
-      set "title" = coalesce(nullif("title", ''), "name")
-      where nullif("title", '') is null and "name" is not null;
-    `);
-
-    await client.query(`
-      update "destinations"
-      set "short_description" = coalesce(nullif("short_description", ''), "description")
-      where nullif("short_description", '') is null and "description" is not null;
-    `);
-
-    await client.query(`
       create unique index if not exists "destinations_slug_unique_idx" on "destinations" ("slug");
       create index if not exists "destinations_created_at_idx" on "destinations" ("created_at");
       create index if not exists "destinations_category_id_idx" on "destinations" ("category_id");
@@ -93,6 +81,116 @@ async function main() {
     );
 
     await client.query(seedSql);
+
+    await client.query(`
+      update "destination_categories"
+      set "image_url" = case "slug"
+        when 'mountains-treks' then 'http://localhost:5173/generated/mountains-treks.svg'
+        when 'beaches' then 'http://localhost:5173/generated/beaches.svg'
+        when 'temples-spiritual' then 'http://localhost:5173/generated/temples-spiritual.svg'
+        when 'heritage-culture' then 'http://localhost:5173/generated/heritage-culture.svg'
+        when 'nature-forest' then 'http://localhost:5173/generated/nature-forest.svg'
+        when 'adventure' then 'http://localhost:5173/generated/adventure.svg'
+        when 'hill-stations' then 'http://localhost:5173/generated/hill-stations.svg'
+        when 'wildlife' then 'http://localhost:5173/generated/wildlife.svg'
+        else "image_url"
+      end
+      where "slug" in (
+        'mountains-treks',
+        'beaches',
+        'temples-spiritual',
+        'heritage-culture',
+        'nature-forest',
+        'adventure',
+        'hill-stations',
+        'wildlife'
+      );
+
+      update "destinations"
+      set "hero_image_url" = case "slug"
+        when 'manali' then 'http://localhost:5173/generated/mountains-treks.svg'
+        when 'leh-ladakh' then 'http://localhost:5173/generated/mountains-treks.svg'
+        when 'goa' then 'http://localhost:5173/generated/beaches.svg'
+        when 'andaman' then 'http://localhost:5173/generated/beaches.svg'
+        when 'varanasi' then 'http://localhost:5173/generated/temples-spiritual.svg'
+        when 'rishikesh' then 'http://localhost:5173/generated/temples-spiritual.svg'
+        when 'udaipur' then 'http://localhost:5173/generated/heritage-culture.svg'
+        when 'hampi' then 'http://localhost:5173/generated/heritage-culture.svg'
+        when 'coorg' then 'http://localhost:5173/generated/nature-forest.svg'
+        when 'meghalaya' then 'http://localhost:5173/generated/nature-forest.svg'
+        when 'kasol' then 'http://localhost:5173/generated/adventure.svg'
+        when 'rishikesh-adventure' then 'http://localhost:5173/generated/adventure.svg'
+        when 'ooty' then 'http://localhost:5173/generated/hill-stations.svg'
+        when 'munnar' then 'http://localhost:5173/generated/hill-stations.svg'
+        when 'jim-corbett' then 'http://localhost:5173/generated/wildlife.svg'
+        when 'kaziranga' then 'http://localhost:5173/generated/wildlife.svg'
+        else "hero_image_url"
+      end
+      where "slug" in (
+        'manali', 'leh-ladakh', 'goa', 'andaman', 'varanasi', 'rishikesh',
+        'udaipur', 'hampi', 'coorg', 'meghalaya', 'kasol', 'rishikesh-adventure',
+        'ooty', 'munnar', 'jim-corbett', 'kaziranga'
+      );
+
+      update "packages"
+      set "hero_image_url" = case "slug"
+        when 'manali-winter-reset' then 'http://localhost:5173/generated/mountains-treks.svg'
+        when 'leh-ladakh-signature-loop' then 'http://localhost:5173/generated/mountains-treks.svg'
+        when 'goa-slow-coast-escape' then 'http://localhost:5173/generated/beaches.svg'
+        when 'andaman-island-drift' then 'http://localhost:5173/generated/beaches.svg'
+        when 'varanasi-dawn-ghats' then 'http://localhost:5173/generated/temples-spiritual.svg'
+        when 'rishikesh-calm-flow' then 'http://localhost:5173/generated/temples-spiritual.svg'
+        when 'udaipur-lake-heritage' then 'http://localhost:5173/generated/heritage-culture.svg'
+        when 'hampi-ruins-boulders' then 'http://localhost:5173/generated/heritage-culture.svg'
+        when 'coorg-coffee-trails' then 'http://localhost:5173/generated/nature-forest.svg'
+        when 'meghalaya-waterfall-weekender' then 'http://localhost:5173/generated/nature-forest.svg'
+        when 'kasol-trail-starter' then 'http://localhost:5173/generated/adventure.svg'
+        when 'rishikesh-white-water-kickoff' then 'http://localhost:5173/generated/adventure.svg'
+        when 'ooty-hill-station-classic' then 'http://localhost:5173/generated/hill-stations.svg'
+        when 'munnar-green-escape' then 'http://localhost:5173/generated/hill-stations.svg'
+        when 'jim-corbett-safari-break' then 'http://localhost:5173/generated/wildlife.svg'
+        when 'kaziranga-rhino-run' then 'http://localhost:5173/generated/wildlife.svg'
+        else "hero_image_url"
+      end
+      where "slug" in (
+        'manali-winter-reset', 'leh-ladakh-signature-loop', 'goa-slow-coast-escape', 'andaman-island-drift',
+        'varanasi-dawn-ghats', 'rishikesh-calm-flow', 'udaipur-lake-heritage', 'hampi-ruins-boulders',
+        'coorg-coffee-trails', 'meghalaya-waterfall-weekender', 'kasol-trail-starter', 'rishikesh-white-water-kickoff',
+        'ooty-hill-station-classic', 'munnar-green-escape', 'jim-corbett-safari-break', 'kaziranga-rhino-run'
+      );
+
+      delete from "package_images"
+      where "package_id" in (
+        select "id" from "packages" where "slug" in (
+          'manali-winter-reset', 'leh-ladakh-signature-loop', 'goa-slow-coast-escape', 'andaman-island-drift',
+          'varanasi-dawn-ghats', 'rishikesh-calm-flow', 'udaipur-lake-heritage', 'hampi-ruins-boulders',
+          'coorg-coffee-trails', 'meghalaya-waterfall-weekender', 'kasol-trail-starter', 'rishikesh-white-water-kickoff',
+          'ooty-hill-station-classic', 'munnar-green-escape', 'jim-corbett-safari-break', 'kaziranga-rhino-run'
+        )
+      );
+
+      insert into "package_images" ("package_id", "storage_path", "public_url", "alt_text", "sort_order", "is_hero")
+      select p.id, img.storage_path, img.public_url, img.alt_text, img.sort_order, img.is_hero
+      from (values
+        ('manali-winter-reset', 'generated/mountains-treks.svg', 'http://localhost:5173/generated/mountains-treks.svg', 'Manali winter mountain view', 0, true),
+        ('leh-ladakh-signature-loop', 'generated/mountains-treks.svg', 'http://localhost:5173/generated/mountains-treks.svg', 'Leh Ladakh road landscape', 0, true),
+        ('goa-slow-coast-escape', 'generated/beaches.svg', 'http://localhost:5173/generated/beaches.svg', 'Goa beach sunset', 0, true),
+        ('andaman-island-drift', 'generated/beaches.svg', 'http://localhost:5173/generated/beaches.svg', 'Andaman island coastline', 0, true),
+        ('varanasi-dawn-ghats', 'generated/temples-spiritual.svg', 'http://localhost:5173/generated/temples-spiritual.svg', 'Varanasi river sunrise', 0, true),
+        ('rishikesh-calm-flow', 'generated/temples-spiritual.svg', 'http://localhost:5173/generated/temples-spiritual.svg', 'Rishikesh riverfront', 0, true),
+        ('udaipur-lake-heritage', 'generated/heritage-culture.svg', 'http://localhost:5173/generated/heritage-culture.svg', 'Udaipur palace and lake', 0, true),
+        ('hampi-ruins-boulders', 'generated/heritage-culture.svg', 'http://localhost:5173/generated/heritage-culture.svg', 'Hampi heritage ruins', 0, true),
+        ('coorg-coffee-trails', 'generated/nature-forest.svg', 'http://localhost:5173/generated/nature-forest.svg', 'Coorg coffee hills', 0, true),
+        ('meghalaya-waterfall-weekender', 'generated/nature-forest.svg', 'http://localhost:5173/generated/nature-forest.svg', 'Meghalaya waterfall landscape', 0, true),
+        ('kasol-trail-starter', 'generated/adventure.svg', 'http://localhost:5173/generated/adventure.svg', 'Kasol mountain trail', 0, true),
+        ('rishikesh-white-water-kickoff', 'generated/adventure.svg', 'http://localhost:5173/generated/adventure.svg', 'Rishikesh rafting river', 0, true),
+        ('ooty-hill-station-classic', 'generated/hill-stations.svg', 'http://localhost:5173/generated/hill-stations.svg', 'Ooty tea hills', 0, true),
+        ('munnar-green-escape', 'generated/hill-stations.svg', 'http://localhost:5173/generated/hill-stations.svg', 'Munnar tea estates', 0, true),
+        ('jim-corbett-safari-break', 'generated/wildlife.svg', 'http://localhost:5173/generated/wildlife.svg', 'Jim Corbett safari forest', 0, true),
+        ('kaziranga-rhino-run', 'generated/wildlife.svg', 'http://localhost:5173/generated/wildlife.svg', 'Kaziranga grasslands', 0, true)
+      ) as img(destination_slug, storage_path, public_url, alt_text, sort_order, is_hero)
+      join "packages" p on p.slug = img.destination_slug;
+    `);
 
     console.log("Demo schema and seed content applied.");
   } finally {

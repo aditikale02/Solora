@@ -11,18 +11,18 @@ create index if not exists "user_saved_packages_package_id_idx" on "user_saved_p
 create index if not exists "user_saved_packages_created_at_idx" on "user_saved_packages" ("created_at");
 
 insert into "destination_categories" ("title", "slug", "description", "image_url", "sort_order") values
-  ('Mountains & Treks', 'mountains-treks', 'High-altitude escapes, ridgelines, and walking journeys.', '', 100),
-  ('Beaches', 'beaches', 'Coastlines, surf towns, and barefoot slow living.', '', 90),
-  ('Temples & Spiritual', 'temples-spiritual', 'Sacred cities, rituals, and reflective journeys.', '', 80),
-  ('Heritage & Culture', 'heritage-culture', 'Historic cities, forts, and living traditions.', '', 70),
-  ('Nature & Forest', 'nature-forest', 'Tea gardens, waterfalls, and green escapes.', '', 60),
-  ('Adventure', 'adventure', 'High-energy trips and offbeat exploration.', '', 50),
-  ('Hill Stations', 'hill-stations', 'Cool-climate getaways with scenic viewpoints.', '', 40),
-  ('Wildlife', 'wildlife', 'National parks, safaris, and forest immersion.', '', 30)
+  ('Mountains & Treks', 'mountains-treks', 'High-altitude escapes, ridgelines, and walking journeys.', 'https://images.unsplash.com/photo-1506931174404-f63b5c0d2f63?auto=format&fit=crop&w=1600&q=80', 100),
+  ('Beaches', 'beaches', 'Coastlines, surf towns, and barefoot slow living.', 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80', 90),
+  ('Temples & Spiritual', 'temples-spiritual', 'Sacred cities, rituals, and reflective journeys.', 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1600&q=80', 80),
+  ('Heritage & Culture', 'heritage-culture', 'Historic cities, forts, and living traditions.', 'https://images.unsplash.com/photo-1562426509-5044f3f84a27?auto=format&fit=crop&w=1600&q=80', 70),
+  ('Nature & Forest', 'nature-forest', 'Tea gardens, waterfalls, and green escapes.', 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80', 60),
+  ('Adventure', 'adventure', 'High-energy trips and offbeat exploration.', 'https://images.unsplash.com/photo-1516306580123-e6e52b1b7b6c?auto=format&fit=crop&w=1600&q=80', 50),
+  ('Hill Stations', 'hill-stations', 'Cool-climate getaways with scenic viewpoints.', 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80', 40),
+  ('Wildlife', 'wildlife', 'National parks, safaris, and forest immersion.', 'https://images.unsplash.com/photo-1549366021-9f761d450615?auto=format&fit=crop&w=1600&q=80', 30)
 on conflict ("slug") do nothing;
 
-insert into "destinations" ("category_id", "name", "title", "slug", "state", "city", "short_description", "long_description", "tags", "hero_image_url", "best_season", "estimated_budget", "ideal_duration_days", "travel_tips", "featured", "is_active")
-select c.id, v.title, v.title, v.slug, v.state, v.city, v.short_description, v.long_description, v.tags, v.hero_image_url, v.best_season, v.estimated_budget, v.ideal_duration_days, v.travel_tips, v.featured, true
+insert into "destinations" ("category_id", "title", "slug", "state", "city", "short_description", "long_description", "tags", "hero_image_url", "best_season", "estimated_budget", "ideal_duration_days", "travel_tips", "featured", "is_active")
+select c.id, v.title, v.slug, v.state, v.city, v.short_description, v.long_description, v.tags, v.hero_image_url, v.best_season, v.estimated_budget, v.ideal_duration_days, v.travel_tips, v.featured, true
 from (values
   ('mountains-treks', 'Manali', 'manali', 'Himachal Pradesh', 'Manali', 'Snowy peaks, cafes, and easy access to adventure.', 'A classic mountain base for travelers who want a little of everything: snowy views, cafes, river walks, and access to Solang Valley and nearby treks.', 'snow, cafes, valleys', 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1600&q=80', 'Oct to Mar', '₹18k - ₹38k', 4, 'Book stays near Old Manali for a calmer experience.', true),
   ('mountains-treks', 'Leh Ladakh', 'leh-ladakh', 'Ladakh', 'Leh', 'Desert mountains, monasteries, and cinematic roads.', 'A high-altitude journey with unforgettable passes, dramatic light, monasteries, and clear skies that make every stop feel bigger than life.', 'high altitude, road trip, monasteries', 'https://images.unsplash.com/photo-1506012787146-f9c5c7d0f8f4?auto=format&fit=crop&w=1600&q=80', 'May to Sep', '₹28k - ₹75k', 6, 'Acclimatize on arrival and hydrate constantly.', true),
@@ -65,3 +65,26 @@ from (values
 ) as p(destination_slug, title, slug, description, duration_days, price_amount, price_currency, features, hero_image_url)
 join "destinations" d on d.slug = p.destination_slug
 on conflict ("slug") do nothing;
+
+insert into "package_images" ("package_id", "storage_path", "public_url", "alt_text", "sort_order", "is_hero")
+select p.id, img.storage_path, img.public_url, img.alt_text, img.sort_order, img.is_hero
+from (values
+  ('manali-winter-reset', 'demo/manali/manali-hero.jpg', 'https://images.unsplash.com/photo-1549921296-3c3f7c1f8f21?auto=format&fit=crop&w=1600&q=80', 'Manali winter mountain view', 0, true),
+  ('leh-ladakh-signature-loop', 'demo/leh-ladakh/leh-ladakh-hero.jpg', 'https://images.unsplash.com/photo-1506012787146-f9c5c7d0f8f4?auto=format&fit=crop&w=1600&q=80', 'Leh Ladakh road landscape', 0, true),
+  ('goa-slow-coast-escape', 'demo/goa/goa-hero.jpg', 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80', 'Goa beach sunset', 0, true),
+  ('andaman-island-drift', 'demo/andaman/andaman-hero.jpg', 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=80', 'Andaman island coastline', 0, true),
+  ('varanasi-dawn-ghats', 'demo/varanasi/varanasi-hero.jpg', 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1600&q=80', 'Varanasi river sunrise', 0, true),
+  ('rishikesh-calm-flow', 'demo/rishikesh/rishikesh-hero.jpg', 'https://images.unsplash.com/photo-1549992722-65f9e1a0875e?auto=format&fit=crop&w=1600&q=80', 'Rishikesh riverfront', 0, true),
+  ('udaipur-lake-heritage', 'demo/udaipur/udaipur-hero.jpg', 'https://images.unsplash.com/photo-1562426509-5044f3f84a27?auto=format&fit=crop&w=1600&q=80', 'Udaipur palace and lake', 0, true),
+  ('hampi-ruins-boulders', 'demo/hampi/hampi-hero.jpg', 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1600&q=80', 'Hampi heritage ruins', 0, true),
+  ('coorg-coffee-trails', 'demo/coorg/coorg-hero.jpg', 'https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80', 'Coorg coffee hills', 0, true),
+  ('meghalaya-waterfall-weekender', 'demo/meghalaya/meghalaya-hero.jpg', 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1600&q=80', 'Meghalaya waterfall landscape', 0, true),
+  ('kasol-trail-starter', 'demo/kasol/kasol-hero.jpg', 'https://images.unsplash.com/photo-1516306580123-e6e52b1b7b6c?auto=format&fit=crop&w=1600&q=80', 'Kasol mountain trail', 0, true),
+  ('rishikesh-white-water-kickoff', 'demo/rishikesh/rishikesh-adventure-hero.jpg', 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=1600&q=80', 'Rishikesh rafting river', 0, true),
+  ('ooty-hill-station-classic', 'demo/ooty/ooty-hero.jpg', 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80', 'Ooty tea hills', 0, true),
+  ('munnar-green-escape', 'demo/munnar/munnar-hero.jpg', 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80', 'Munnar tea estates', 0, true),
+  ('jim-corbett-safari-break', 'demo/jim-corbett/jim-corbett-hero.jpg', 'https://images.unsplash.com/photo-1549366021-9f761d450615?auto=format&fit=crop&w=1600&q=80', 'Jim Corbett safari forest', 0, true),
+  ('kaziranga-rhino-run', 'demo/kaziranga/kaziranga-hero.jpg', 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1600&q=80', 'Kaziranga grasslands', 0, true)
+) as img(destination_slug, storage_path, public_url, alt_text, sort_order, is_hero)
+join "packages" p on p.slug = img.destination_slug
+on conflict do nothing;

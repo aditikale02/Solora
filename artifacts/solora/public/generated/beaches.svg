@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Beaches</title>
+  <desc id="desc">A warm beach illustration for the Beaches category.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#004c6d"/>
+      <stop offset="50%" stop-color="#18a0b8"/>
+      <stop offset="100%" stop-color="#ffd37b"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#d9eef6" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1260" cy="180" r="110" fill="#fff0c1" fill-opacity="0.85"/>
+  <path d="M0 520C180 470 300 470 420 520C560 580 680 610 820 560C960 510 1110 500 1260 550C1380 590 1490 605 1600 570V900H0Z" fill="url(#wave)" fill-opacity="0.45"/>
+  <path d="M0 650C200 610 330 620 470 670C620 730 770 760 930 710C1090 660 1210 640 1360 680C1470 705 1540 720 1600 710V900H0Z" fill="#f7e7c6"/>
+  <rect x="96" y="96" width="540" height="220" rx="34" fill="#fff7ee" fill-opacity="0.78"/>
+  <text x="130" y="182" font-family="Georgia, serif" font-size="72" fill="#1a1714">Beaches</text>
+  <text x="130" y="245" font-family="Arial, sans-serif" font-size="30" fill="#5a4c3a">Coastlines, surf towns, and slow sunsets</text>
+</svg>

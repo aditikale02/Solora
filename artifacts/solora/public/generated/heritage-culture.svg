@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Heritage & Culture</title>
+  <desc id="desc">A palace and arch illustration for the Heritage & Culture category.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4b2e24"/>
+      <stop offset="55%" stop-color="#8d6340"/>
+      <stop offset="100%" stop-color="#e4c89c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <path d="M190 700H650V420H190Z" fill="#f6efe4" fill-opacity="0.92"/>
+  <path d="M950 700H1410V480H950Z" fill="#f6efe4" fill-opacity="0.92"/>
+  <path d="M600 700H1000V320H600Z" fill="#fff8ef" fill-opacity="0.96"/>
+  <rect x="96" y="96" width="650" height="220" rx="34" fill="#fff7ee" fill-opacity="0.78"/>
+  <text x="130" y="182" font-family="Georgia, serif" font-size="72" fill="#1a1714">Heritage</text>
+  <text x="130" y="245" font-family="Arial, sans-serif" font-size="30" fill="#5a4c3a">Historic cities, forts, and living traditions</text>
+</svg>

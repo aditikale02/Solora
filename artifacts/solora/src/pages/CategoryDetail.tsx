@@ -35,10 +35,17 @@ export default function CategoryDetailPage() {
     <main className="min-h-screen bg-[#F7F2EC] px-4 py-10 text-[#1A1714] md:px-8">
       <div className="mx-auto max-w-6xl">
         <Link href="/destinations" className="text-sm text-[#8B6340] underline-offset-4 hover:underline">Back to destinations</Link>
-        <section className="mt-4 overflow-hidden rounded-[28px] border border-[#E3D6C1] bg-white/85 p-6 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#8B6340]">Category</p>
-          <h1 className="mt-2 font-serif text-5xl">{category.title}</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-[#5A4C3A]">{category.description}</p>
+        <section className="mt-4 overflow-hidden rounded-[28px] border border-[#E3D6C1] bg-white/85 shadow-sm">
+          <img
+            src={category.imageUrl || fallbackImage}
+            alt={category.title}
+            className="h-[280px] w-full object-cover"
+          />
+          <div className="p-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-[#8B6340]">Category</p>
+            <h1 className="mt-2 font-serif text-5xl">{category.title}</h1>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-[#5A4C3A]">{category.description}</p>
+          </div>
         </section>
         <section className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {destinations.map((destination) => (

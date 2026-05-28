@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Nature & Forest</title>
+  <desc id="desc">A lush forest illustration for the Nature & Forest category.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#09321d"/>
+      <stop offset="60%" stop-color="#3b7a47"/>
+      <stop offset="100%" stop-color="#a3d977"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1200" cy="160" r="130" fill="#f0ffd8" fill-opacity="0.55"/>
+  <path d="M240 740L380 460L520 740Z" fill="#17361f"/>
+  <path d="M520 740L660 420L800 740Z" fill="#245b2f"/>
+  <path d="M820 740L980 470L1140 740Z" fill="#1e4727"/>
+  <path d="M1110 740L1260 510L1410 740Z" fill="#2f6d39"/>
+  <rect x="96" y="96" width="620" height="220" rx="34" fill="#fff7ee" fill-opacity="0.78"/>
+  <text x="130" y="182" font-family="Georgia, serif" font-size="72" fill="#1a1714">Nature</text>
+  <text x="130" y="245" font-family="Arial, sans-serif" font-size="30" fill="#5a4c3a">Tea gardens, waterfalls, and green escapes</text>
+</svg>

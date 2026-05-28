@@ -10,20 +10,86 @@ import { setPageSeo } from "@/lib/seo";
 const travelQuote = "A journey in India is never just a route. It is a shift in rhythm.";
 
 const fallbackCategories = [
-  "mountains",
-  "treks",
-  "beaches",
-  "temples",
-  "heritage",
-  "wildlife",
-  "spiritual",
-  "adventure",
-  "hill-stations",
-  "desert",
-  "waterfalls",
-  "food-culture",
-  "hidden-gems",
-  "monsoon-trips",
+  {
+    id: "mountains-treks",
+    title: "Mountains & Treks",
+    slug: "mountains-treks",
+    description: "High-altitude escapes, ridgelines, and walking journeys.",
+    imageUrl: "https://images.unsplash.com/photo-1506931174404-f63b5c0d2f63?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 100,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "beaches",
+    title: "Beaches",
+    slug: "beaches",
+    description: "Coastlines, surf towns, and barefoot slow living.",
+    imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 90,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "temples-spiritual",
+    title: "Temples & Spiritual",
+    slug: "temples-spiritual",
+    description: "Sacred cities, rituals, and reflective journeys.",
+    imageUrl: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 80,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "heritage-culture",
+    title: "Heritage & Culture",
+    slug: "heritage-culture",
+    description: "Historic cities, forts, and living traditions.",
+    imageUrl: "https://images.unsplash.com/photo-1562426509-5044f3f84a27?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 70,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "nature-forest",
+    title: "Nature & Forest",
+    slug: "nature-forest",
+    description: "Tea gardens, waterfalls, and green escapes.",
+    imageUrl: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 60,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "adventure",
+    title: "Adventure",
+    slug: "adventure",
+    description: "High-energy trips and offbeat exploration.",
+    imageUrl: "https://images.unsplash.com/photo-1516306580123-e6e52b1b7b6c?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 50,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "hill-stations",
+    title: "Hill Stations",
+    slug: "hill-stations",
+    description: "Cool-climate getaways with scenic viewpoints.",
+    imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 40,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "wildlife",
+    title: "Wildlife",
+    slug: "wildlife",
+    description: "National parks, safaris, and forest immersion.",
+    imageUrl: "https://images.unsplash.com/photo-1549366021-9f761d450615?auto=format&fit=crop&w=1600&q=80",
+    sortOrder: 30,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 export default function Dashboard() {
@@ -187,9 +253,14 @@ export default function Dashboard() {
             </Link>
           </div>
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {(topCategories.length ? topCategories : fallbackCategories.map((slug, index) => ({ id: slug, title: slug.replace(/-/g, " "), slug, description: "Explore this travel mood.", imageUrl: "", sortOrder: index, createdAt: new Date(), updatedAt: new Date() }))).map((category) => (
+            {(topCategories.length ? topCategories : fallbackCategories).map((category) => (
               <Link key={category.slug} href={`/categories/${category.slug}`} className="group overflow-hidden rounded-2xl border border-[#E3D6C1] bg-[#FFFDF9] transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="h-36 bg-[linear-gradient(135deg,rgba(201,169,110,0.18),rgba(141,188,156,0.18))]" style={category.imageUrl ? { backgroundImage: `url(${category.imageUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined} />
+                <img
+                  src={category.imageUrl || "http://localhost:5173/generated/beaches.svg"}
+                  alt={category.title}
+                  className="h-36 w-full object-cover"
+                  loading="lazy"
+                />
                 <div className="p-4">
                   <p className="text-xs uppercase tracking-[0.25em] text-[#8B6340]">Category</p>
                   <h3 className="mt-2 font-serif text-2xl text-[#1A1714]">{category.title}</h3>
