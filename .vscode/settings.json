@@ -1,2 +1,7 @@
 {
+	"files.associations": {
+		"*.sql": "postgresql"
+	},
+	"mssql.autoDisableNonTSqlLanguageService": true,
+	"mssql.intelliSense.enableErrorChecking": false
 }

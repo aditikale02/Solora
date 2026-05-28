@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { fetchSessionRole } from "@workspace/api-client-react";
 import { isAllowedAdminEmail } from "@/lib/admin-auth";
 import { supabase } from "@/lib/supabase";
 
@@ -15,35 +14,14 @@ async function resolveState(session: Session | null): Promise<SessionRoleState> 
     return { status: "signed-out" };
   }
 
-  try {
-    const role = await fetchSessionRole();
+  const email = session.user.email ?? "";
+  const fullName = session.user.user_metadata?.full_name as string | undefined;
 
-    if (role.role === "admin") {
-      return {
-        status: "admin",
-        email: role.email ?? session.user.email ?? "",
-        fullName: role.fullName,
-      };
-    }
-
-    if (role.role === "user") {
-      return {
-        status: "user",
-        email: role.email ?? session.user.email ?? "",
-        fullName: role.fullName,
-      };
-    }
-  } catch {
-    const email = session.user.email ?? "";
-
-    return {
-      status: isAllowedAdminEmail(email) ? "admin" : "user",
-      email,
-      fullName: session.user.user_metadata?.full_name as string | undefined,
-    };
-  }
-
-  return { status: "signed-out" };
+  return {
+    status: isAllowedAdminEmail(email) ? "admin" : "user",
+    email,
+    fullName,
+  };
 }
 
 export function useSessionRole() {

@@ -4,7 +4,7 @@ do $$ begin
   create type "lead_status" as enum ('new', 'contacted', 'in_progress', 'closed');
 exception
   when duplicate_object then null;
-end $$;
+end $$ language plpgsql;
 
 create table if not exists "users" (
   "id" uuid primary key default gen_random_uuid(),
