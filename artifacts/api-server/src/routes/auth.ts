@@ -36,4 +36,37 @@ router.get("/auth/role", async (req, res, next) => {
   }
 });
 
+router.post("/auth/register", async (req, res, next) => {
+  try {
+    const email = String(req.body?.email ?? "").trim().toLowerCase();
+    const password = String(req.body?.password ?? "").trim();
+    const fullName = String(req.body?.fullName ?? "").trim();
+
+    if (!email || !password || !fullName) {
+      return res.status(400).json({ message: "email, password, and fullName are required." });
+    }
+
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: fullName },
+    });
+
+    if (error) {
+      const status = error.message.toLowerCase().includes("already exists") ? 409 : 400;
+      return res.status(status).json({ message: error.message });
+    }
+
+    return res.status(201).json({
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 export default router;

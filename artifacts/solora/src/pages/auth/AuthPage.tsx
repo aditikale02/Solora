@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { signInAdmin, signInWithPassword } from "@/lib/admin-auth";
 import { isAllowedAdminEmail } from "@/lib/admin-auth";
 import { useSessionRole } from "@/hooks/use-session-role";
+import { registerUser } from "@workspace/api-client-react";
 
 function AuthBackdrop() {
   return (
@@ -109,39 +110,29 @@ export default function AuthPage() {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { user } = await registerUser({
         email,
         password,
-        options: {
-          data: { full_name: fullName },
-        },
+        fullName,
       });
 
-      if (error) {
-        // Surface specific known errors
-        if ((error as any).status === 429) {
-          throw new Error('Too many requests. Please wait and try again.');
-        }
-        throw error;
-      }
+      const signedIn = await signInWithPassword(user.email ?? email, password);
 
-      if (data.session) {
-        if (isAllowedAdminEmail(data.user?.email ?? email)) {
-          navigate("/admin/dashboard", { replace: true });
-        } else {
-          navigate("/dashboard", { replace: true });
-        }
-        return;
-      }
+      toast.success("Account created and signed in successfully.");
 
-      toast.success("Account created. Check your email to confirm your account.");
-      setTab("login");
+      if (isAllowedAdminEmail(signedIn.user.email ?? email)) {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
     } catch (error) {
       console.error('❌ Signup error:', error);
-      if (error && typeof error === 'object' && 'message' in error) {
+      if (error && typeof error === 'object' && 'status' in error && (error as any).status === 429) {
+        toast.error('Too many requests. Please wait a moment and try again.');
+      } else if (error && typeof error === 'object' && 'status' in error && (error as any).status === 409) {
+        toast.error('An account with this email already exists. Try signing in.');
+      } else if (error && typeof error === 'object' && 'message' in error) {
         toast.error((error as any).message);
-      } else if (error && typeof error === 'string') {
-        toast.error(error as string);
       } else {
         toast.error('Unable to sign up.');
       }

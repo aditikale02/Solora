@@ -207,6 +207,16 @@ export async function fetchSessionRole(): Promise<SessionRole> {
 	return sessionRoleSchema.parse(response);
 }
 
+export async function registerUser(payload: {
+	email: string;
+	password: string;
+	fullName: string;
+}): Promise<{ user: { id: string; email: string | null } }> {
+	const response = await postJson<{ user: { id: string; email: string | null } }>("/api/auth/register", payload);
+
+	return response;
+}
+
 export async function fetchPublicDestinations(): Promise<DestinationRecord[]> {
 	const response = await apiFetch<{ destinations: DestinationRecord[] }>("/api/destinations", {
 		responseType: "json",
