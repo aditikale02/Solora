@@ -165,7 +165,7 @@ async function uploadToStorageWithRetry(params: {
   }
 }
 
-router.use(requireAdmin);
+router.use("/admin", requireAdmin);
 
 router.get("/admin/me", (req: AdminRequest, res) => {
   return res.json({ user: req.adminUser });
